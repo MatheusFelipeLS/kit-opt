@@ -8,7 +8,7 @@
 #define max_iter 50
 
 using namespace std;
-
+  
 typedef struct Solucao {
     vector<int> ordem;
     double custo = 0;
