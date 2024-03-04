@@ -8,7 +8,7 @@
 #define max_iter 50
 
 using namespace std;
-  
+                  
 typedef struct Solucao {
     vector<int> ordem;
     double custo = 0;
@@ -135,7 +135,6 @@ Solucao Construcao(Data *pData) {
 
   while(!CL.empty()) {
     vector<custoInsercao> custoInsercao = calcularCustoInsercao(s, CL, pData);
-    // ordenarEmOrdemCrescente(custoInsercao);
     sort(custoInsercao.begin(), custoInsercao.end(), check);
     int alpha = rand() % 2;
     if(CL.size() == 1) 
@@ -153,7 +152,7 @@ Solucao Construcao(Data *pData) {
 bool bestImprovementSwap(Solucao *s, Data *pData) {
   double bestDelta = 0;
   int best_i, best_j;
-  for(int i = 1; i < s->ordem.size() - 2; i++) {
+  for(int i = 1; i < s->ordem.size() - 3; i++) {
     int vi = s->ordem[i];
     int vi_next = s->ordem[i + 1];
     int vi_prev = s->ordem[i - 1];
@@ -162,7 +161,8 @@ bool bestImprovementSwap(Solucao *s, Data *pData) {
     int vj = s->ordem[i+1];
     int vj_next = s->ordem[i+2];
     int vj_prev = s->ordem[i];
-    double delta = valoresVi + pData->getDistance(vi_prev, vj) - pData->getDistance(vj, vj_next) + pData->getDistance(vi, vj_next) + pData->getDistance(vi, vi_next);
+    double delta = valoresVi + pData->getDistance(vi_prev, vj) - pData->getDistance(vj, vj_next)
+    + pData->getDistance(vi, vj_next) + pData->getDistance(vi, vi_next);
     if (delta < bestDelta) {
         bestDelta = delta;
         best_i = i;
@@ -305,12 +305,6 @@ void buscaLocal(Solucao *s, Data *pData) {
 
 Solucao Perturbacao(Solucao s, Data *pData) {
     srand(time(NULL));
-    
-    // int initTrecDir = 3+(rand() % (pData->getDimension()-5));
-    // int initTrecEsq = 1+(rand()%(initTrecDir-2));
-    
-    // int tamTrechEsq = 2+(rand()%(initTrecDir-initTrecEsq-1));
-    // int tamTrechDir = 2+(rand()%(pData->getDimension()-initTrecDir-2));
 
     int tamTrechEsq = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
     int tamTrechDir = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
@@ -332,10 +326,7 @@ Solucao Perturbacao(Solucao s, Data *pData) {
       s.custo += - pData->getDistance(NFTE, s.ordem[initTrecEsq+tamTrechEsq]) - pData->getDistance(NITD, s.ordem[initTrecDir-1])
       + pData->getDistance(NITE, s.ordem[initTrecDir-1]) + pData->getDistance(NFTD, s.ordem[initTrecEsq+tamTrechEsq]); 
     }
-    
-    // cout << "initTrecEsq: " << initTrecEsq << "; initTrecDir: " << initTrecDir << 
-    // "; tamTrechEsq: " << tamTrechEsq << "; tamTrechDir: " << tamTrechDir << endl;
-    
+
     for(int i = 0; i < tamTrechEsq; i++) {
         s.ordem.insert(s.ordem.begin()+initTrecDir, s.ordem[initTrecEsq]);
         s.ordem.erase(s.ordem.begin() + initTrecEsq);

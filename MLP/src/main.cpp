@@ -31,7 +31,7 @@ typedef struct Subsequence {
 	int first, last; // primeiro e ultimo nos da subsequencia
 	inline static Subsequence Concatenate(Subsequence &sigma_1, Subsequence &sigma_2, Data *pData) {
 		Subsequence sigma;
-		double temp = pData->getDistance(sigma_1.last, sigma_2.first);
+		double temp = pData->getDistance(sigma_1.last, sigma_2.first);  
 		sigma.W = sigma_1.W + sigma_2.W;
 		sigma.T = sigma_1.T + temp + sigma_2.T;
 		sigma.C = sigma_1.C + sigma_2.W * (sigma_1.T + temp) + sigma_2.C;
@@ -43,9 +43,9 @@ typedef struct Subsequence {
 
 //--------------------------------FUNÇÕES------------------------------------//
 //funções gerais
-int calcular_dist_total(Solucao s, Data *pData);
-void mostraSolucao(Solucao s);
-void UpdateAllSubseq(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
+void mostrarSolucao(Solucao s);
+void UpdateAllSubseq(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
+void atualiza(vector<vector<Subsequence>> &subseq_matrix, int start, int end, Data *pData);
 
 //funções da construção em ordem de aparição no método Construção
 vector<int> escolher3NosAleatorios(Data *data);
@@ -54,51 +54,71 @@ vector<custoInsercao> calcularCustoInsercao(Solucao s, vector<int> CL, Data *pDa
 void inserirNaSolucao(Solucao *s, custoInsercao novoNo, vector<int> &CL);
 Solucao Construcao(Data *pData);
 
+//UpdateAllSubseq
+void UpdateAllSubseq(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
+
 //funções para busca local em ordem de aparição no método buscaLocal
-bool bestImprovementSwap(Solucao *s, Data *pData);
-bool bestImprovement2Opt(Solucao *s, Data *pData);
-bool bestImprovementOrOpt(Solucao *s, int tipoOpt, Data *pData);
-void buscaLocal(Solucao *s, Data *pData);
+bool bestImprovementSwap_mlp(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
+bool bestImprovement2Opt_mlp(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
+bool bestImprovementOrOpt_mlp(Solucao *s, int tipoOpt, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
+void buscaLocal(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
 
 //Perturbação
-Solucao Perturbacao(Solucao s, Data *pData);
+Solucao Perturbacao_mlp(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void UpdateAllSubseq(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
-	int n = s->ordem.size();
+void UpdateAllSubseq(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
+	int n = subseq_matrix.size();
 	// subsequencias de um unico no
 	for(int i = 0; i < n; i++) {
-		int v = s->ordem[i];
+		int v = s.ordem[i];
 		subseq_matrix[i][i].W = (i > 0);
 		subseq_matrix[i][i].C = 0;
 		subseq_matrix[i][i].T = 0;
-		subseq_matrix[i][i].first = s->ordem[i];
-		subseq_matrix[i][i].last = s->ordem[i];
+		subseq_matrix[i][i].first = v;
+		subseq_matrix[i][i].last = v;
 	}
+  
 	for(int i = 0; i < n; i++)
 		for(int j = i + 1; j < n; j++)
 			subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
-	// subsequencias invertidas
-	// (necessarias para o 2-opt)
+
+	// subsequencias invertidas (necessarias para o 2-opt)
 	for(int i = n - 1; i >= 0; i--)
 		for(int j = i - 1; j >= 0; j--)
 			subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
 }
 
-void mostraSolucao(Solucao s) {
+//função para modificar as subsequencias que foram modificadas
+void atualiza(vector<vector<Subsequence>> &subseq_matrix, int start, int end, Data *pData) {
+  int n = subseq_matrix.size();
+  //start é a posição da primeira modificação e end é a posição da última
+  //refaz o retangulo superior esquerdo
+  for(int i = 0; i < start; ++i) 
+    for(int j = start; j < n; ++j) {
+      subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
+    }
+  //refaz o lado direito da região modificada
+  for(int i = start; i <= end; ++i) 
+    for(int j = i+1; j < n; ++j) 
+      subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
+
+  //refaz o retangulo inferior esquerdo
+  for(int i = n - 1; i > end; --i)
+		for(int j = end; j >= 0; --j)
+			subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
+    
+  //refaz o lado esquerdo da região modificada
+  for(int i = end; i >= start; --i)
+		for(int j = i-1; j >= 0; --j)
+			subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
+}
+
+void mostrarSolucao(Solucao s) {
   for(int i = 0; i < s.ordem.size()-1; ++i) {
     cout << s.ordem[i] << " - ";
   }
   cout << s.ordem[s.ordem.size()-1] << endl;
-}
-
-int calcular_dist_total(Solucao s, Data *pData) {
-  s.custo = 0;
-  for(int i = 0; i < s.ordem.size()-1; i++) {
-    s.custo += pData->getDistance(s.ordem[i], s.ordem[i+1]);
-  }
-  return s.custo;
 }
 
 // Escolhe 3 valores, formando uma solução do tipo 1 - x - y - z - 1, com 1 < x, y e z < dim(instancia) 
@@ -187,42 +207,26 @@ Solucao Construcao(Data *pData) {
     int alpha = rand() % 2;
     if(CL.size() == 1) 
       alpha = 0;
-    // double alpha = (double) rand() / RAND_MAX;
-    // int selecionado = rand() % ((int) ceil(alpha * custoInsercao.size()));
     inserirNaSolucao(&s, custoInsercao[alpha], CL);
   } 
 
-  s.custo = calcular_dist_total(s, pData);
   return s;
 }
 
-
-bool bestImprovementSwap(Solucao *s, Data *pData) {
+bool bestImprovementSwap_mlp(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
   double bestDelta = 0;
   int best_i, best_j;
-  for(int i = 1; i < s->ordem.size() - 2; i++) {
-    int vi = s->ordem[i];
-    int vi_next = s->ordem[i + 1];
-    int vi_prev = s->ordem[i - 1];
-    double valoresVi = - pData->getDistance(vi_prev, vi) - pData->getDistance(vi, vi_next);
 
-    int vj = s->ordem[i+1];
-    int vj_next = s->ordem[i+2];
-    int vj_prev = s->ordem[i];
-    double delta = valoresVi + pData->getDistance(vi_prev, vj) - pData->getDistance(vj, vj_next) + pData->getDistance(vi, vj_next) + pData->getDistance(vi, vi_next);
-    if (delta < bestDelta) {
-        bestDelta = delta;
-        best_i = i;
-        best_j = i+1;
-    }
-    for(int j = i + 2; j < s->ordem.size() - 1; j++) {
-      vj = s->ordem[j];
-      vj_next = s->ordem[j+1];
-      vj_prev = s->ordem[j-1];
-      delta = valoresVi + pData->getDistance(vi_prev, vj) + pData->getDistance(vj, vi_next) - pData->getDistance(vj_prev, vj) 
-      - pData->getDistance(vj, vj_next) + pData->getDistance(vj_prev, vi) + pData->getDistance(vi, vj_next);
-      if (delta < bestDelta) {
-        bestDelta = delta;
+  int n = s->ordem.size();
+  for(int i = 1; i < n-3; ++i) {
+    for(int j = i+2; j < n-1; ++j) {
+      Subsequence sigma_1, sigma_2;
+      sigma_1 = Subsequence::Concatenate(subseq_matrix[0][i-1], subseq_matrix[j][j], pData);
+      sigma_2 = Subsequence::Concatenate(sigma_1, subseq_matrix[i+1][j-1], pData);
+      sigma_1 = Subsequence::Concatenate(sigma_2, subseq_matrix[i][i], pData);
+      sigma_2 = Subsequence::Concatenate(sigma_1, subseq_matrix[j+1][n-1], pData);
+      if(sigma_2.C - s->custo < bestDelta) {
+        bestDelta = sigma_2.C - s->custo;
         best_i = i;
         best_j = j;
       }
@@ -230,26 +234,27 @@ bool bestImprovementSwap(Solucao *s, Data *pData) {
   }
   if(bestDelta < 0) {
     swap(s->ordem[best_i], s->ordem[best_j]);
+    Subsequence aux = subseq_matrix[best_i][best_i];
+    subseq_matrix[best_i][best_i] = subseq_matrix[best_j][best_j];
+    subseq_matrix[best_j][best_j] = aux;
+    atualiza(subseq_matrix, best_i, best_j, pData);
     s->custo += bestDelta;
     return true;
   }
   return false;
 }
 
-bool bestImprovement2Opt(Solucao *s, Data *pData) {
+bool bestImprovement2Opt_mlp(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
   double bestDelta = 0;
   int best_i, best_j;
-  for(int i = 1; i < s->ordem.size() - 3; i++) {
-    int vi = s->ordem[i];
-    int vi_prev = s->ordem[i - 1]; 
-    double valoresVi = -pData->getDistance(vi, vi_prev);
-    for(int j = i + 2; j < s->ordem.size()-1; j++) {
-      int vj = s->ordem[j];
-      int vj_next = s->ordem[j + 1];
-      double delta = valoresVi - pData->getDistance(vj, vj_next) + pData->getDistance(vi, vj_next) 
-      + pData->getDistance(vi_prev, vj); 
-      if(delta < bestDelta) {
-        bestDelta = delta;
+  int n = s->ordem.size();
+  for(int i = 1; i < n-3; ++i) {
+    for(int j = i+2; j < n-1; ++j) {
+      Subsequence sigma_1, sigma_2;
+      sigma_1 = Subsequence::Concatenate(subseq_matrix[0][i-1], subseq_matrix[j][i], pData);
+      sigma_2 = Subsequence::Concatenate(sigma_1, subseq_matrix[j+1][n-1], pData);
+      if(sigma_2.C - s->custo < bestDelta) {
+        bestDelta = sigma_2.C - s->custo;
         best_i = i;
         best_j = j;
       }
@@ -258,60 +263,83 @@ bool bestImprovement2Opt(Solucao *s, Data *pData) {
   if(bestDelta < 0) {
     for(int i = 0; i < 1 + ((best_j - best_i) / 2); i++) {
       swap(s->ordem[best_i+i], s->ordem[best_j-i]);
-    };
+      Subsequence aux = subseq_matrix[best_i+i][best_i+i];
+      subseq_matrix[best_i+i][best_i+i] = subseq_matrix[best_j-i][best_j-i];
+      subseq_matrix[best_j-i][best_j-i] = aux;
+    }
+    atualiza(subseq_matrix, best_i, best_j, pData);
     s->custo += bestDelta;
     return true;
   }
   return false;
 }
 
-bool bestImprovementOrOpt(Solucao *s, int tipoOpt, Data *pData) {
+bool bestImprovementOrOpt_mlp(Solucao *s, int tipoOpt, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
   double bestDelta = 0;
   int best_i, best_j;
-  
-  //i = nó que será reinserido
-  for(int i = 1; i < s->ordem.size()-tipoOpt; i++) {
-    int vi_prev = s->ordem[i-1];
-    int vi = s->ordem[i];
-    int i_tOpt = i+tipoOpt;
-    int noFinal = i_tOpt - 1;
-    double valoresVi = pData->getDistance(vi_prev, s->ordem[i_tOpt]) - pData->getDistance(vi_prev, vi) 
-    - pData->getDistance(s->ordem[noFinal], s->ordem[i_tOpt]);
-    
-    //j = nó onde o nó i será reinserido
-    for(int j = i + tipoOpt; j < s->ordem.size()-1; j++) {
-      int prox_j = s->ordem[j+1];
-      double delta = valoresVi + pData->getDistance(vi, s->ordem[j]) + pData->getDistance(s->ordem[noFinal], prox_j) 
-      - pData->getDistance(s->ordem[j], prox_j);
-      if(delta < bestDelta) {
-        bestDelta = delta;
+
+  int n = s->ordem.size();
+  for(int i = 1; i < n-tipoOpt; ++i) {
+    Subsequence sigma_1, sigma_2;
+    for(int j = i+tipoOpt; j < n-1; ++j) {
+      sigma_1 = Subsequence::Concatenate(subseq_matrix[0][i-1], subseq_matrix[i+tipoOpt][j], pData);
+      sigma_2 = Subsequence::Concatenate(sigma_1, subseq_matrix[i][i+tipoOpt-1], pData);
+      sigma_1 = Subsequence::Concatenate(sigma_2, subseq_matrix[j+1][n-1], pData);
+      if(sigma_1.C - s->custo < bestDelta) {
+        bestDelta = sigma_1.C - s->custo;
         best_i = i;
         best_j = j;
       }
     }
-    for(int j = 0; j < i-1; j++) {
-      int prox_j = s->ordem[j+1];
-      double delta = valoresVi + pData->getDistance(vi, s->ordem[j]) + pData->getDistance(s->ordem[noFinal], prox_j) 
-      - pData->getDistance(s->ordem[j], prox_j);
-      if(delta < bestDelta) {
-        bestDelta = delta;
+
+    for(int j = 0; j < i-1; ++j) {
+      sigma_1 = Subsequence::Concatenate(subseq_matrix[0][j], subseq_matrix[i][i+tipoOpt-1], pData);
+      sigma_2 = Subsequence::Concatenate(sigma_1, subseq_matrix[j+1][i-1], pData);
+      sigma_1 = Subsequence::Concatenate(sigma_2, subseq_matrix[i+tipoOpt][n-1], pData);
+      if(sigma_1.C - s->custo < bestDelta) {
+        bestDelta = sigma_1.C - s->custo;
         best_i = i;
         best_j = j;
       }
     }
-  } 
+  }
 
   if(bestDelta < 0) {
     if(best_i < best_j) {
       for(int i = 0; i < tipoOpt; i++) {
         s->ordem.insert(s->ordem.begin()+best_j+1, s->ordem[best_i]);
         s->ordem.erase(s->ordem.begin() + best_i);
+        subseq_matrix.insert(subseq_matrix.begin()+best_j+1, subseq_matrix[best_i]);
+        subseq_matrix.erase(subseq_matrix.begin() + best_i);
       }
+      //desloca os nós que estão sendo reinseridos para a direita
+      for(int i = 0; i < tipoOpt; ++i) {
+        subseq_matrix[best_j-i][best_j-i] = subseq_matrix[best_j-i][best_i+tipoOpt-i-1];
+      }
+      for(int i = best_i; i < best_j-tipoOpt+1; ++i) {
+        for(int j = 0; j < tipoOpt; ++j) {
+          subseq_matrix[i].erase(subseq_matrix[i].begin());
+          subseq_matrix[i].push_back(subseq_matrix[i][i]);
+        }
+      }
+      atualiza(subseq_matrix, best_i, best_j, pData);
     }else {
       for(int i = 0; i < tipoOpt; i++) {
         s->ordem.insert(s->ordem.begin()+best_j+i+1, s->ordem[best_i+i]);
         s->ordem.erase(s->ordem.begin() + best_i+i+1);
+        subseq_matrix.insert(subseq_matrix.begin()+best_j+i+1, subseq_matrix[best_i+i]);
+        subseq_matrix.erase(subseq_matrix.begin() + best_i+i+1);
       }
+      for(int i = 0; i < tipoOpt; ++i) {
+        subseq_matrix[best_j+i+1][best_j+i+1] = subseq_matrix[best_j+i+1][best_i+i];
+      }     
+      for(int i = best_j+tipoOpt+1; i <= best_i+tipoOpt-1; ++i) {
+        for(int j = 0; j < tipoOpt; ++j) {
+          subseq_matrix[i].erase(subseq_matrix[i].begin()+subseq_matrix[i].size()-1);
+          subseq_matrix[i].insert(subseq_matrix[i].begin(), subseq_matrix[i][i]);
+        }
+      }
+      atualiza(subseq_matrix, best_j+1, best_i+tipoOpt-1, pData);
     }
     s->custo += bestDelta;
     return true;
@@ -319,7 +347,7 @@ bool bestImprovementOrOpt(Solucao *s, int tipoOpt, Data *pData) {
   return false;
 }
 
-void buscaLocal(Solucao *s, Data *pData) {
+void buscaLocal(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
     vector<int> NL = {1, 2, 3, 4, 5};
     srand(time(NULL));
     bool improved = false;
@@ -327,19 +355,19 @@ void buscaLocal(Solucao *s, Data *pData) {
       int n = rand() % NL.size();
       switch(NL[n]) {
         case 1: 
-          improved = bestImprovementSwap(s, pData);
+          improved = bestImprovementSwap_mlp(s, pData, subseq_matrix);
           break;
         case 2:
-          improved = bestImprovement2Opt(s, pData);
+          improved = bestImprovement2Opt_mlp(s, pData, subseq_matrix);
           break;
         case 3:
-          improved = bestImprovementOrOpt(s, 1, pData); //Reinsertion
+          improved = bestImprovementOrOpt_mlp(s, 1, pData, subseq_matrix); //Reinsertion
           break;
         case 4:
-          improved = bestImprovementOrOpt(s, 2, pData); //Or-opt2
+          improved = bestImprovementOrOpt_mlp(s, 2, pData, subseq_matrix); //Or-opt2
           break;
         case 5:
-          improved = bestImprovementOrOpt(s, 3, pData); //Or-opt3
+          improved = bestImprovementOrOpt_mlp(s, 3, pData, subseq_matrix); //Or-opt3
           break;
       }
       if(improved) {
@@ -350,45 +378,64 @@ void buscaLocal(Solucao *s, Data *pData) {
     }
 }
 
-Solucao Perturbacao(Solucao s, Data *pData) {
+Solucao Perturbacao_mlp(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
+    int n = pData->getDimension();
     srand(time(NULL));
 
-    int tamTrechEsq = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
-    int tamTrechDir = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
+    int tamTrecEsq = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
+    int tamTrecDir = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
     
-    int initTrecEsq = 1+(rand()%(pData->getDimension()-tamTrechDir-tamTrechEsq));
-    int initTrecDir = initTrecEsq+tamTrechEsq+(rand()%(pData->getDimension()+1-tamTrechDir-tamTrechEsq-initTrecEsq));
+    int initTrecEsq = 1+(rand()%(pData->getDimension()-tamTrecDir-tamTrecEsq));
+    int initTrecDir = initTrecEsq+tamTrecEsq+(rand()%(pData->getDimension()+1-tamTrecDir-tamTrecEsq-initTrecEsq));
 
     int NITE = s.ordem[initTrecEsq]; //nó no início do trecho esquerdo
-    int NFTE = s.ordem[initTrecEsq+tamTrechEsq-1]; //nó no final do trecho esquerdo
+    int NFTE = s.ordem[initTrecEsq+tamTrecEsq-1]; //nó no final do trecho esquerdo
     int NITD = s.ordem[initTrecDir]; //nó no início do trecho direito
-    int NFTD = s.ordem[initTrecDir+tamTrechDir-1]; //nó no final do trecho direito
+    int NFTD = s.ordem[initTrecDir+tamTrecDir-1]; //nó no final do trecho direito
 
-    s.custo += - pData->getDistance(s.ordem[initTrecEsq-1], NITE) - pData->getDistance(NFTD, s.ordem[initTrecDir+tamTrechDir])
-    + pData->getDistance(NFTE, s.ordem[initTrecDir+tamTrechDir]) + pData->getDistance(NITD, s.ordem[initTrecEsq-1]);
-    
-    if(initTrecEsq + tamTrechEsq == initTrecDir) {
+    s.custo += - pData->getDistance(s.ordem[initTrecEsq-1], NITE) - pData->getDistance(NFTD, s.ordem[initTrecDir+tamTrecDir])
+    + pData->getDistance(NFTE, s.ordem[initTrecDir+tamTrecDir]) + pData->getDistance(NITD, s.ordem[initTrecEsq-1]);
+
+    if(initTrecEsq + tamTrecEsq == initTrecDir) {
       s.custo += - pData->getDistance(NFTE, NITD)  + pData->getDistance(NFTD, NITE);
     } else {
-      s.custo += - pData->getDistance(NFTE, s.ordem[initTrecEsq+tamTrechEsq]) - pData->getDistance(NITD, s.ordem[initTrecDir-1])
-      + pData->getDistance(NITE, s.ordem[initTrecDir-1]) + pData->getDistance(NFTD, s.ordem[initTrecEsq+tamTrechEsq]); 
+      s.custo += - pData->getDistance(NFTE, s.ordem[initTrecEsq+tamTrecEsq]) - pData->getDistance(NITD, s.ordem[initTrecDir-1])
+      + pData->getDistance(NITE, s.ordem[initTrecDir-1]) + pData->getDistance(NFTD, s.ordem[initTrecEsq+tamTrecEsq]); 
     }
-    
-    // cout << "initTrecEsq: " << initTrecEsq << "; initTrecDir: " << initTrecDir << 
-    // "; tamTrechEsq: " << tamTrechEsq << "; tamTrechDir: " << tamTrechDir << endl;
-    
-    for(int i = 0; i < tamTrechEsq; i++) {
+
+    for(int i = 0; i < tamTrecEsq; i++) {
         s.ordem.insert(s.ordem.begin()+initTrecDir, s.ordem[initTrecEsq]);
         s.ordem.erase(s.ordem.begin() + initTrecEsq);
+        subseq_matrix.insert(subseq_matrix.begin()+initTrecDir, subseq_matrix[initTrecEsq]);
+        subseq_matrix.erase(subseq_matrix.begin() + initTrecEsq);
     }
-    for(int i = 0; i < tamTrechDir; i++) {
+    for(int i = 0; i < tamTrecDir; i++) {
         s.ordem.insert(s.ordem.begin()+initTrecEsq+i, s.ordem[initTrecDir+i]);
         s.ordem.erase(s.ordem.begin()+initTrecDir+i+1);
+        subseq_matrix.insert(subseq_matrix.begin()+initTrecEsq+i, subseq_matrix[initTrecDir+i]);
+        subseq_matrix.erase(subseq_matrix.begin()+initTrecDir+i+1);
     }
+
+    //ajeita a diagonal principal do trecho que foi movido para "direita"
+    for(int i = 0; i < tamTrecEsq; ++i) {
+        int x = initTrecDir+tamTrecDir-tamTrecEsq+i;
+        subseq_matrix[x][x] = subseq_matrix[x][initTrecEsq+i];
+    }
+    
+    //ajeita a diagonal principal do trecho que foi movido para "esquerda"
+    for(int i = 0; i < tamTrecDir; ++i) {
+        subseq_matrix[initTrecEsq+i][initTrecEsq+i] = subseq_matrix[initTrecEsq+i][initTrecDir+i];
+    }
+
+    //ajeita a diagonal principal das linhas entre os trechos trocados
+    for(int i = initTrecEsq + tamTrecDir; i < initTrecDir + tamTrecDir - tamTrecEsq; ++i) {
+        subseq_matrix[i][i] = subseq_matrix[i][i+tamTrecEsq-tamTrecDir];
+    }   
+    
+    atualiza(subseq_matrix, initTrecEsq, initTrecDir+tamTrecDir-1, pData);
     
     return s;
 }
-
 
 int main(int argc, char** argv) {
   time_t start, end;
@@ -396,6 +443,7 @@ int main(int argc, char** argv) {
   start = clock();
 
   ios_base::sync_with_stdio(false);
+
   for(int cont = 0; cont < 10; cont++) {
     auto data = Data(argc, argv[1]);
     data.read();
@@ -403,6 +451,7 @@ int main(int argc, char** argv) {
     size_t n = data.getDimension();
 
     Solucao melhorSolucao;
+    vector<vector<Subsequence>> subseq_matrix(n+1, vector<Subsequence>(n+1));
     melhorSolucao.custo = numeric_limits<int>::max();
     
     int maxIterIls = n;
@@ -411,33 +460,33 @@ int main(int argc, char** argv) {
 
     for(int i = 0; i < max_iter; i++) {
       Solucao s = Construcao(pData);
-      vector<vector<Subsequence>> subseq_matrix(n, vector<Subsequence>(n));
+      UpdateAllSubseq(s, pData, subseq_matrix);
+      s.custo = subseq_matrix[0][n].C;
       Solucao melhorTemporaria = s;
       int iterILS = 0;
       while(iterILS <= maxIterIls) {
-        buscaLocal(&s, pData);
+        buscaLocal(&s, pData, subseq_matrix);
         if(s.custo < melhorTemporaria.custo) {
           melhorTemporaria = s;
           iterILS = 0;
         }
-        s = Perturbacao(melhorTemporaria, pData);
+        s = Perturbacao_mlp(melhorTemporaria, pData, subseq_matrix);
         iterILS++;
       }
       if(melhorTemporaria.custo < melhorSolucao.custo) 
         melhorSolucao = melhorTemporaria;
     }
 
-    mostraSolucao(melhorSolucao);
+    mostrarSolucao(melhorSolucao);
     cout << "Custo: " << melhorSolucao.custo << endl;
     media += melhorSolucao.custo;
   }
 
   cout << "Custo médio: " << media/10;
   end = clock();
-      double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-      cout << "; Tempo médio: " << fixed 
-          << time_taken/10 << setprecision(5);
-      cout << " sec " << endl;
+  double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+  cout << "; Tempo médio: " << fixed << time_taken/10 << setprecision(5);
+  cout << " sec " << endl;
 
   return 0;
 }
