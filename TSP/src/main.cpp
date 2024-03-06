@@ -39,7 +39,6 @@ int calcular_dist_total(Solucao s, Data *pData) {
 vector<int> escolher3NosAleatorios(Data *data) {   //, vector<int> &CL
 	vector<int> nos;
 	int valor;
-	srand(time(NULL));
 
 	nos.push_back(1);
 
@@ -94,24 +93,6 @@ vector<custoInsercao> calcularCustoInsercao(Solucao s, vector<int> CL, Data *pDa
   return custoInsercao;
 }
 
-void ordenarEmOrdemCrescente(vector<custoInsercao> &CI) {
-  int i, trocou;
-  custoInsercao aux;
-
-  trocou = 1;
-  while(trocou){
-    trocou = 0;
-    for(i = 0; i < CI.size()-1; i++){
-      if (CI[i].custo > CI[i+1].custo) {
-        aux = CI[i];
-        CI[i] = CI[i+1];
-        CI[i+1] = aux;
-        trocou = 1;
-      }
-    }
-  }
-}
-
 void inserirNaSolucao(Solucao *s, custoInsercao novoNo, vector<int> &CL) {
   s->ordem.insert(s->ordem.begin() + novoNo.arestaRemovida + 1, novoNo.noInserido);
   for(int i = 0; i < CL.size(); i++) {
@@ -128,31 +109,26 @@ bool check(custoInsercao i, custoInsercao j){
 
 Solucao Construcao(Data *pData) {
   Solucao s;
-  srand(time(NULL));
 
   s.ordem = escolher3NosAleatorios(pData);
   vector<int> CL = nosRestantes(pData, s.ordem);
 
   while(!CL.empty()) {
     vector<custoInsercao> custoInsercao = calcularCustoInsercao(s, CL, pData);
-    sort(custoInsercao.begin(), custoInsercao.end(), check);
-    int alpha = rand() % 2;
-    if(CL.size() == 1) 
-      alpha = 0;
-    // double alpha = (double) rand() / RAND_MAX;
-    // int selecionado = rand() % ((int) ceil(alpha * custoInsercao.size()));
-    inserirNaSolucao(&s, custoInsercao[alpha], CL);
+    sort(custoInsercao.begin(), custoInsercao.end(), check);  
+    double alpha = (double) rand() / RAND_MAX;
+    int selecionado = rand() % ((int) ceil(alpha * custoInsercao.size()));
+    inserirNaSolucao(&s, custoInsercao[selecionado], CL);
   } 
 
   s.custo = calcular_dist_total(s, pData);
   return s;
 }
 
-
 bool bestImprovementSwap(Solucao *s, Data *pData) {
   double bestDelta = 0;
   int best_i, best_j;
-  for(int i = 1; i < s->ordem.size() - 3; i++) {
+  for(int i = 1; i < s->ordem.size() - 2; i++) {
     int vi = s->ordem[i];
     int vi_next = s->ordem[i + 1];
     int vi_prev = s->ordem[i - 1];
@@ -274,7 +250,6 @@ bool bestImprovementOrOpt(Solucao *s, int tipoOpt, Data *pData) {
 
 void buscaLocal(Solucao *s, Data *pData) {
     vector<int> NL = {1, 2, 3, 4, 5};
-    srand(time(NULL));
     bool improved = false;
     while(NL.empty() == false) {
       int n = rand() % NL.size();
@@ -304,8 +279,6 @@ void buscaLocal(Solucao *s, Data *pData) {
 }
 
 Solucao Perturbacao(Solucao s, Data *pData) {
-    srand(time(NULL));
-
     int tamTrechEsq = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
     int tamTrechDir = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
     
@@ -344,11 +317,10 @@ int main(int argc, char** argv) {
   time_t start, end;
   int media = 0;
   start = clock();
+  srand(time(NULL));
+  ios_base::sync_with_stdio(false);
 
   for(int cont = 0; cont < 10; cont++) {
-
-    ios_base::sync_with_stdio(false);
-
     auto data = Data(argc, argv[1]);
     data.read();
     Data *pData = &data;
@@ -364,6 +336,7 @@ int main(int argc, char** argv) {
     for(int i = 0; i < max_iter; i++) {
       Solucao s = Construcao(pData);
       Solucao melhorTemporaria = s;
+
       int iterILS = 0;
       while(iterILS <= maxIterIls) {
         buscaLocal(&s, pData);
