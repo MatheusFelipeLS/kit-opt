@@ -1,67 +1,7 @@
-Média do custo e o tempo em segundos de 10 execuções do algoritmo em cada instância. Processador Celeron N4020
+Média do custo e o tempo em segundos de 10 execuções do algoritmo em cada instância. Intel® Celeron N4020
 
 dantzig42.tsp:
-Custo médio: 12754; Tempo médio: 0.269118 sec
+Custo médio: 12585; Tempo médio: 0.540490 sec 
 
 swiss42.tsp:
-Custo médio: 22652; Tempo médio: 0.227357 sec
-
-att48.tsp:
-Custo médio: 213129; Tempo médio: 0.364336 sec
-
-gr48.tsp:
-Custo médio: 105219; Tempo médio: 0.366298 sec
-
-hk48.tsp:
-Custo médio: 251560; Tempo médio: 0.420328 sec
-
-eil51.tsp:
-Custo médio: 10495; Tempo médio: 0.456105 sec 
-
-berlin52.tsp:
-Custo médio: 146370; Tempo médio: 0.444904 sec 
-
-brazil58.tsp:
-Custo médio: 524742; Tempo médio: 0.693657 sec
-
-st70.tsp:
-Custo médio: 21212; Tempo médio: 1.211471 sec
-
-eil76.tsp:
-Custo médio: 18772; Tempo médio: 1.595778 sec 
-
-pr76.tsp:
-Custo médio: 3529812; Tempo médio: 1.470548 sec
-
-gr96.tsp:
-Custo médio: 2110444; Tempo médio: 3.299464 sec
-
-rat99.tsp:
-Custo médio: 59600; Tempo médio: 3.514674 sec 
-
-kroA100.tsp:
-Custo médio: 1005618; Tempo médio: 3.926015 sec
-
-kroB100.tsp:
-Custo médio: 1011809; Tempo médio: 3.774863 sec
-
-kroC100.tsp:
-Custo médio: 979163; Tempo médio: 3.969798 sec
-
-kroD100.tsp:
-Custo médio: 1012337; Tempo médio: 3.983226 sec
-
-kroE100.tsp:
-Custo médio: 989727; Tempo médio: 3.869509 sec
-
-rd100.tsp:
-Custo médio: 344033; Tempo médio: 3.840190 sec
-
-eil101.tsp:
-Custo médio: 28516; Tempo médio: 3.994948 sec
-
-lin105.tsp:
-Custo médio: 617651; Tempo médio: 4.346683 sec
-
-pr107.tsp:
-Custo médio: 2046010; Tempo médio: 4.547665 sec
+Custo médio: 22790; Tempo médio: 0.685995 sec 

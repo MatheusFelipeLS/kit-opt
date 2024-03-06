@@ -1,1 +1,5 @@
 .vscode
+obj
+**/.vscode
+TSP/tsp
+MLP/mlp

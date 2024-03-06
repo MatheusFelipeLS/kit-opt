@@ -122,7 +122,7 @@ void mostrarSolucao(Solucao s) {
 }
 
 // Escolhe 3 valores, formando uma solução do tipo 1 - x - y - z - 1, com 1 < x, y e z < dim(instancia) 
-vector<int> escolher3NosAleatorios(Data *data) {   //, vector<int> &CL
+vector<int> escolher3NosAleatorios(Data *data) {   
 	vector<int> nos;
 	int valor;
 	srand(time(NULL));
@@ -203,11 +203,10 @@ Solucao Construcao(Data *pData) {
 
   while(!CL.empty()) {
     vector<custoInsercao> custoInsercao = calcularCustoInsercao(s, CL, pData);
-    sort(custoInsercao.begin(), custoInsercao.end(), check);
-    int alpha = rand() % 2;
-    if(CL.size() == 1) 
-      alpha = 0;
-    inserirNaSolucao(&s, custoInsercao[alpha], CL);
+    sort(custoInsercao.begin(), custoInsercao.end(), check);  
+    double alpha = (double) rand() / RAND_MAX;
+    int selecionado = rand() % ((int) ceil(alpha * custoInsercao.size()));
+    inserirNaSolucao(&s, custoInsercao[selecionado], CL);
   } 
 
   return s;
@@ -263,9 +262,7 @@ bool bestImprovement2Opt_mlp(Solucao *s, Data *pData, vector<vector<Subsequence>
   if(bestDelta < 0) {
     for(int i = 0; i < 1 + ((best_j - best_i) / 2); i++) {
       swap(s->ordem[best_i+i], s->ordem[best_j-i]);
-      Subsequence aux = subseq_matrix[best_i+i][best_i+i];
-      subseq_matrix[best_i+i][best_i+i] = subseq_matrix[best_j-i][best_j-i];
-      subseq_matrix[best_j-i][best_j-i] = aux;
+      swap(subseq_matrix[best_i+i][best_i+i], subseq_matrix[best_j-i][best_j-i]);
     }
     atualiza(subseq_matrix, best_i, best_j, pData);
     s->custo += bestDelta;
@@ -281,6 +278,7 @@ bool bestImprovementOrOpt_mlp(Solucao *s, int tipoOpt, Data *pData, vector<vecto
   int n = s->ordem.size();
   for(int i = 1; i < n-tipoOpt; ++i) {
     Subsequence sigma_1, sigma_2;
+    //reinserindo os nós em posições a frente
     for(int j = i+tipoOpt; j < n-1; ++j) {
       sigma_1 = Subsequence::Concatenate(subseq_matrix[0][i-1], subseq_matrix[i+tipoOpt][j], pData);
       sigma_2 = Subsequence::Concatenate(sigma_1, subseq_matrix[i][i+tipoOpt-1], pData);
@@ -292,6 +290,7 @@ bool bestImprovementOrOpt_mlp(Solucao *s, int tipoOpt, Data *pData, vector<vecto
       }
     }
 
+    //reinserindo os nós nas posições finais
     for(int j = 0; j < i-1; ++j) {
       sigma_1 = Subsequence::Concatenate(subseq_matrix[0][j], subseq_matrix[i][i+tipoOpt-1], pData);
       sigma_2 = Subsequence::Concatenate(sigma_1, subseq_matrix[j+1][i-1], pData);
@@ -306,39 +305,44 @@ bool bestImprovementOrOpt_mlp(Solucao *s, int tipoOpt, Data *pData, vector<vecto
 
   if(bestDelta < 0) {
     if(best_i < best_j) {
+      //reinserindo os nós 
       for(int i = 0; i < tipoOpt; i++) {
         s->ordem.insert(s->ordem.begin()+best_j+1, s->ordem[best_i]);
         s->ordem.erase(s->ordem.begin() + best_i);
         subseq_matrix.insert(subseq_matrix.begin()+best_j+1, subseq_matrix[best_i]);
         subseq_matrix.erase(subseq_matrix.begin() + best_i);
       }
+
       //desloca os nós que estão sendo reinseridos para a direita
       for(int i = 0; i < tipoOpt; ++i) {
         subseq_matrix[best_j-i][best_j-i] = subseq_matrix[best_j-i][best_i+tipoOpt-i-1];
       }
+      
+      //ajeita a diagonal principal dos nós que estão entre os nós reinseridos e a posição da reinserção
       for(int i = best_i; i < best_j-tipoOpt+1; ++i) {
-        for(int j = 0; j < tipoOpt; ++j) {
-          subseq_matrix[i].erase(subseq_matrix[i].begin());
-          subseq_matrix[i].push_back(subseq_matrix[i][i]);
-        }
+        subseq_matrix[i][i] = subseq_matrix[i][i+tipoOpt];
       }
+      
       atualiza(subseq_matrix, best_i, best_j, pData);
     }else {
+      //reinserindo os nós
       for(int i = 0; i < tipoOpt; i++) {
         s->ordem.insert(s->ordem.begin()+best_j+i+1, s->ordem[best_i+i]);
         s->ordem.erase(s->ordem.begin() + best_i+i+1);
         subseq_matrix.insert(subseq_matrix.begin()+best_j+i+1, subseq_matrix[best_i+i]);
         subseq_matrix.erase(subseq_matrix.begin() + best_i+i+1);
       }
+      
+      //ajeita a diagonal principal dos nós reinseridos
       for(int i = 0; i < tipoOpt; ++i) {
         subseq_matrix[best_j+i+1][best_j+i+1] = subseq_matrix[best_j+i+1][best_i+i];
       }     
+      
+      //ajeita a diagonal principal dos nós que trocaram de posição, mas não porque foram reinseridos
       for(int i = best_j+tipoOpt+1; i <= best_i+tipoOpt-1; ++i) {
-        for(int j = 0; j < tipoOpt; ++j) {
-          subseq_matrix[i].erase(subseq_matrix[i].begin()+subseq_matrix[i].size()-1);
-          subseq_matrix[i].insert(subseq_matrix[i].begin(), subseq_matrix[i][i]);
-        }
+        subseq_matrix[i][i] = subseq_matrix[i][i-tipoOpt];
       }
+      
       atualiza(subseq_matrix, best_j+1, best_i+tipoOpt-1, pData);
     }
     s->custo += bestDelta;
@@ -388,27 +392,15 @@ Solucao Perturbacao_mlp(Solucao s, Data *pData, vector<vector<Subsequence>> &sub
     int initTrecEsq = 1+(rand()%(pData->getDimension()-tamTrecDir-tamTrecEsq));
     int initTrecDir = initTrecEsq+tamTrecEsq+(rand()%(pData->getDimension()+1-tamTrecDir-tamTrecEsq-initTrecEsq));
 
-    int NITE = s.ordem[initTrecEsq]; //nó no início do trecho esquerdo
-    int NFTE = s.ordem[initTrecEsq+tamTrecEsq-1]; //nó no final do trecho esquerdo
-    int NITD = s.ordem[initTrecDir]; //nó no início do trecho direito
-    int NFTD = s.ordem[initTrecDir+tamTrecDir-1]; //nó no final do trecho direito
-
-    s.custo += - pData->getDistance(s.ordem[initTrecEsq-1], NITE) - pData->getDistance(NFTD, s.ordem[initTrecDir+tamTrecDir])
-    + pData->getDistance(NFTE, s.ordem[initTrecDir+tamTrecDir]) + pData->getDistance(NITD, s.ordem[initTrecEsq-1]);
-
-    if(initTrecEsq + tamTrecEsq == initTrecDir) {
-      s.custo += - pData->getDistance(NFTE, NITD)  + pData->getDistance(NFTD, NITE);
-    } else {
-      s.custo += - pData->getDistance(NFTE, s.ordem[initTrecEsq+tamTrecEsq]) - pData->getDistance(NITD, s.ordem[initTrecDir-1])
-      + pData->getDistance(NITE, s.ordem[initTrecDir-1]) + pData->getDistance(NFTD, s.ordem[initTrecEsq+tamTrecEsq]); 
-    }
-
+    //colocando o trecho da esquerda para direita
     for(int i = 0; i < tamTrecEsq; i++) {
         s.ordem.insert(s.ordem.begin()+initTrecDir, s.ordem[initTrecEsq]);
         s.ordem.erase(s.ordem.begin() + initTrecEsq);
         subseq_matrix.insert(subseq_matrix.begin()+initTrecDir, subseq_matrix[initTrecEsq]);
         subseq_matrix.erase(subseq_matrix.begin() + initTrecEsq);
     }
+
+    //colocando o trecho da direita para esquerda
     for(int i = 0; i < tamTrecDir; i++) {
         s.ordem.insert(s.ordem.begin()+initTrecEsq+i, s.ordem[initTrecDir+i]);
         s.ordem.erase(s.ordem.begin()+initTrecDir+i+1);
@@ -434,6 +426,8 @@ Solucao Perturbacao_mlp(Solucao s, Data *pData, vector<vector<Subsequence>> &sub
     
     atualiza(subseq_matrix, initTrecEsq, initTrecDir+tamTrecDir-1, pData);
     
+    s.custo = subseq_matrix[0][s.ordem.size()-1].C;
+
     return s;
 }
 
@@ -486,7 +480,7 @@ int main(int argc, char** argv) {
   end = clock();
   double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
   cout << "; Tempo médio: " << fixed << time_taken/10 << setprecision(5);
-  cout << " sec " << endl;
+  cout << " sec " << endl << endl;
 
   return 0;
 }
