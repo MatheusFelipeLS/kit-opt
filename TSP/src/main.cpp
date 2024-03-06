@@ -315,7 +315,7 @@ Solucao Perturbacao(Solucao s, Data *pData) {
 
 int main(int argc, char** argv) {
   time_t start, end;
-  int media = 0;
+  double media = 0;
   start = clock();
   srand(time(NULL));
   ios_base::sync_with_stdio(false);
