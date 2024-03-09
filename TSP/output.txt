@@ -1,3 +1,205 @@
 Média do custo e o tempo em segundos de 10 execuções do algoritmo em cada instância. Processador Intel® Celeron N4020 
 
 a280.tsp:
+Custo médio: 2579; Tempo médio: 137.181959 sec 
+
+ali535.tsp:
+Custo médio: 202415; Tempo médio: 2546.030639 sec 
+
+att48.tsp:
+Custo médio: 10628; Tempo médio: 0.322891 sec 
+
+att532.tsp:
+Custo médio: 27734.3; Tempo médio: 3027.493541 sec 
+
+bayg29.tsp:
+Custo médio: 1610; Tempo médio: 0.050775 sec 
+
+bays29.tsp:
+Custo médio: 2020; Tempo médio: 0.056114 sec 
+
+berlin52.tsp:
+Custo médio: 7542; Tempo médio: 0.402757 sec 
+
+bier127.tsp:
+Custo médio: 118282; Tempo médio: 13.038062 sec 
+
+brazil58.tsp:
+Custo médio: 25395; Tempo médio: 0.547276 sec 
+
+brg180.tsp:
+Custo médio: 1950; Tempo médio: 17.530487 sec 
+
+burma14.tsp:
+Custo médio: 3323; Tempo médio: 0.004671 sec 
+
+ch130.tsp:
+Custo médio: 6110; Tempo médio: 14.172660 sec 
+
+ch150.tsp:
+Custo médio: 6528; Tempo médio: 13.570932 sec 
+
+d198.tsp:
+Custo médio: 15780; Tempo médio: 42.120313 sec 
+
+d493.tsp:
+Custo médio: 35046.2; Tempo médio: 1771.683786 sec 
+
+dantzig42.tsp:
+Custo médio: 699; Tempo médio: 0.187898 sec 
+
+eil101.tsp:
+Custo médio: 629; Tempo médio: 5.107688 sec 
+
+eil51.tsp:
+Custo médio: 426; Tempo médio: 0.406453 sec 
+
+eil76.tsp:
+Custo médio: 538; Tempo médio: 1.848750 sec 
+
+fl417.tsp:
+Custo médio: 11861; Tempo médio: 586.470964 sec 
+
+fri26.tsp:
+Custo médio: 937; Tempo médio: 0.036622 sec 
+
+gil262.tsp:
+Custo médio: 2379.4; Tempo médio: 131.900845 sec 
+
+gr120.tsp:
+Custo médio: 6942; Tempo médio: 10.637517 sec 
+
+gr137.tsp:
+Custo médio: 69853; Tempo médio: 13.744749 sec 
+
+gr17.tsp:
+Custo médio: 2085; Tempo médio: 0.009623 sec 
+
+gr202.tsp:
+Custo médio: 40160.3; Tempo médio: 56.318737 sec 
+
+gr21.tsp:
+Custo médio: 2707; Tempo médio: 0.016240 sec 
+
+gr229.tsp:
+Custo médio: 134632; Tempo médio: 82.027462 sec 
+
+gr24.tsp:
+Custo médio: 1272; Tempo médio: 0.028827 sec 
+
+gr431.tsp:
+Custo médio: 171580; Tempo médio: 1146.113245 sec 
+
+gr48.tsp:
+Custo médio: 5046; Tempo médio: 0.327315 sec 
+
+gr96.tsp:
+Custo médio: 55209; Tempo médio: 3.981279 sec 
+
+hk48.tsp:
+Custo médio: 11461; Tempo médio: 0.343019 sec 
+
+kroA100.tsp:
+Custo médio: 21282; Tempo médio: 4.164482 sec 
+
+kroA150.tsp:
+Custo médio: 26524; Tempo médio: 15.448421 sec 
+
+kroA200.tsp:
+Custo médio: 29368; Tempo médio: 47.418654 sec 
+
+kroB100.tsp:
+Custo médio: 22141; Tempo médio: 4.501914 sec 
+
+kroB150.tsp:
+Custo médio: 26130; Tempo médio: 14.375493 sec 
+
+kroB200.tsp:
+Custo médio: 29438.2; Tempo médio: 53.554605 sec 
+
+kroC100.tsp:
+Custo médio: 20749; Tempo médio: 4.222948 sec 
+
+kroD100.tsp:
+Custo médio: 21294; Tempo médio: 4.656098 sec 
+
+kroE100.tsp:
+Custo médio: 22068; Tempo médio: 4.619543 sec 
+
+lin105.tsp:
+Custo médio: 14379; Tempo médio: 5.101024 sec 
+
+lin318.tsp:
+Custo médio: 42035.4; Tempo médio: 281.008858 sec 
+
+linhp318.tsp:
+Custo médio: 42052.1; Tempo médio: 279.531690 sec 
+
+pcb442.tsp:
+Custo médio: 50886.8; Tempo médio: 952.702583 sec 
+
+pr107.tsp:
+Custo médio: 44303; Tempo médio: 5.519026 sec 
+
+pr124.tsp:
+Custo médio: 59030; Tempo médio: 8.354824 sec 
+
+pr136.tsp:
+Custo médio: 96772; Tempo médio: 16.442285 sec 
+
+pr144.tsp:
+Custo médio: 58537; Tempo médio: 13.859342 sec 
+
+pr152.tsp:
+Custo médio: 73682; Tempo médio: 11.229868 sec 
+
+pr226.tsp:
+Custo médio: 80369; Tempo médio: 60.470082 sec 
+
+pr264.tsp:
+Custo médio: 49135; Tempo médio: 94.979552 sec 
+
+pr299.tsp:
+Custo médio: 48191; Tempo médio: 192.991162 sec 
+
+pr76.tsp:
+Custo médio: 108159; Tempo médio: 1.602496 sec 
+
+rat195.tsp:
+Custo médio: 2325; Tempo médio: 43.324426 sec 
+
+rat99.tsp:
+Custo médio: 1211; Tempo médio: 4.802647 sec 
+
+rd100.tsp:
+Custo médio: 7910; Tempo médio: 4.783253 sec 
+
+rd400.tsp:
+Custo médio: 15296.6; Tempo médio: 750.556273 sec 
+
+si175.tsp:
+Custo médio: 21407; Tempo médio: 21.717415 sec 
+
+si535.tsp:
+Custo médio: 48461.6; Tempo médio: 1579.656696 sec 
+
+st70.tsp:
+Custo médio: 675; Tempo médio: 1.205035 sec 
+
+swiss42.tsp:
+Custo médio: 1273; Tempo médio: 0.174795 sec 
+
+ts225.tsp:
+Custo médio: 126643; Tempo médio: 40.642303 sec 
+
+tsp:225.tsp:
+Custo médio: 3916; Tempo médio: 65.833707 sec 
+
+u159.tsp:
+Custo médio: 42080; Tempo médio: 13.529621 sec 
+
+ulysses16.tsp:
+Custo médio: 6859; Tempo médio: 0.008169 sec 
+
+ulysses22.tsp:
+Custo médio: 7013; Tempo médio: 0.020983 sec 

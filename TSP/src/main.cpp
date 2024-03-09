@@ -351,8 +351,8 @@ int main(int argc, char** argv) {
         melhorSolucao = melhorTemporaria;
     }
 
-    mostraSolucao(melhorSolucao);
-    cout << "Custo: " << melhorSolucao.custo << endl;
+    // mostraSolucao(melhorSolucao);
+    // cout << "Custo: " << melhorSolucao.custo << endl;
     media += melhorSolucao.custo;
   }
 
