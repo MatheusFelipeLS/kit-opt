@@ -1,7 +1,2 @@
 Média do custo e o tempo em segundos de 10 execuções do algoritmo em cada instância. Intel® Celeron N4020
 
-dantzig42.tsp:
-Custo médio: 12585; Tempo médio: 0.540490 sec 
-
-swiss42.tsp:
-Custo médio: 22790; Tempo médio: 0.685995 sec 

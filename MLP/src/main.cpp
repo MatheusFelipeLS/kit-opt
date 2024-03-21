@@ -21,7 +21,6 @@ typedef struct Solucao {
 
 struct custoInsercao {
     int noInserido;
-    int arestaRemovida;
     double custo;
 };
 
@@ -121,67 +120,20 @@ void mostrarSolucao(Solucao s) {
   cout << s.ordem[s.ordem.size()-1] << endl;
 }
 
-// Escolhe 3 valores, formando uma solução do tipo 1 - x - y - z - 1, com 1 < x, y e z < dim(instancia) 
-vector<int> escolher3NosAleatorios(Data *data) {   
-	vector<int> nos;
-	int valor;
-	srand(time(NULL));
-
-	nos.push_back(1);
-
-	for(int i = 0; i < 3; i++) {
-	    valor = rand() % data->getDimension() + 1;
-        for(int j = 0; j < nos.size(); j++) {
-            if(valor == nos[j]) {
-                j = 0;
-                valor = rand() % data->getDimension() + 1;
-            }
-        }
-		nos.push_back(valor);
-	}
-	nos.push_back(1);
-
-	return nos;
-}
-
-//verifica quais nós não estão não são os 3 escolhidos antes, e os insere na solução 
-vector<int> nosRestantes(Data *data, vector<int> nosEscolhidos) {
-	vector<int> nos;
-	bool verifica;
-	for(int i = 2; i < data->getDimension()+1; i++) {
-	  verifica = false;
-		for(int j = 1; j < nosEscolhidos.size()-1; j++) {
-			if(i == nosEscolhidos[j]) {
-				verifica = true;
-				break;
-			}
-		}
-		if(!verifica) {
-			nos.push_back(i);
-		}
-	}
-
-	return nos;
-}
-
-vector<custoInsercao> calcularCustoInsercao(Solucao s, vector<int> CL, Data *pData) {
-  vector<custoInsercao> custoInsercao((s.ordem.size() - 1) * CL.size());
-  int l = 0;
-  for(int a = 0; a < s.ordem.size() - 1; a++) {
-    int i = s.ordem[a];
-    int j = s.ordem[a + 1];
-    for (auto k : CL) {
-      custoInsercao[l].custo = pData->getDistance(i, k) + pData->getDistance(j, k) - pData->getDistance(i, j);
-      custoInsercao[l].noInserido = k;
-      custoInsercao[l].arestaRemovida = a;
-      l++;
-    }
+vector<custoInsercao> calcularCustoInsercao_mlp(Solucao s, vector<int> CL, Data *pData) {
+  vector<custoInsercao> custoInsercao(CL.size());
+  int l = s.ordem.size();
+  int a = 0;
+  for(auto k : CL) {
+    custoInsercao[a].custo = pData->getDistance(s.ordem[l-1], k);
+    custoInsercao[a].noInserido = k;
+    ++a;
   }
   return custoInsercao;
 }
 
-void inserirNaSolucao(Solucao *s, custoInsercao novoNo, vector<int> &CL) {
-  s->ordem.insert(s->ordem.begin() + novoNo.arestaRemovida + 1, novoNo.noInserido);
+void inserirNaSolucao_mlp(Solucao *s, custoInsercao novoNo, vector<int> &CL) {
+  s->ordem.push_back(novoNo.noInserido);
   for(int i = 0; i < CL.size(); i++) {
     if(CL[i] == novoNo.noInserido) {
       CL.erase(CL.begin()+i);
@@ -196,18 +148,24 @@ bool check(custoInsercao i, custoInsercao j){
 
 Solucao Construcao(Data *pData) {
   Solucao s;
-  srand(time(NULL));
+  vector<int> CL;
 
-  s.ordem = escolher3NosAleatorios(pData);
-  vector<int> CL = nosRestantes(pData, s.ordem);
+  s.ordem.push_back(1);
+
+  for(int i = 0; i < pData->getDimension()-1; ++i) {
+    CL.push_back(i+2);
+  }
 
   while(!CL.empty()) {
-    vector<custoInsercao> custoInsercao = calcularCustoInsercao(s, CL, pData);
-    sort(custoInsercao.begin(), custoInsercao.end(), check);  
+    vector<custoInsercao> custoInsercao = calcularCustoInsercao_mlp(s, CL, pData);
+    sort(custoInsercao.begin(), custoInsercao.end(), check);
     double alpha = (double) rand() / RAND_MAX;
-    int selecionado = rand() % ((int) ceil(alpha * custoInsercao.size()));
-    inserirNaSolucao(&s, custoInsercao[selecionado], CL);
-  } 
+    int porcent = ceil(( alpha * CL.size()) / 4);
+    int selecionado = (rand() % porcent);
+    inserirNaSolucao_mlp(&s, custoInsercao[selecionado], CL);
+  }
+
+  s.ordem.push_back(1);
 
   return s;
 }
@@ -353,7 +311,6 @@ bool bestImprovementOrOpt_mlp(Solucao *s, int tipoOpt, Data *pData, vector<vecto
 
 void buscaLocal(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
     vector<int> NL = {1, 2, 3, 4, 5};
-    srand(time(NULL));
     bool improved = false;
     while(NL.empty() == false) {
       int n = rand() % NL.size();
@@ -384,7 +341,6 @@ void buscaLocal(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_mat
 
 Solucao Perturbacao_mlp(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
     int n = pData->getDimension();
-    srand(time(NULL));
 
     int tamTrecEsq = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
     int tamTrecDir = 2+(rand()%((int) ceil((double) pData->getDimension()/10)-1));
@@ -433,8 +389,9 @@ Solucao Perturbacao_mlp(Solucao s, Data *pData, vector<vector<Subsequence>> &sub
 
 int main(int argc, char** argv) {
   time_t start, end;
-  int media = 0;
+  double media = 0;
   start = clock();
+  srand(time(NULL));
 
   ios_base::sync_with_stdio(false);
 
