@@ -12,6 +12,8 @@
 #define max_iter 50
 
 using namespace std;
+
+bool x = true;
   
 //structs
 typedef struct Solucao {
@@ -40,33 +42,8 @@ typedef struct Subsequence {
 	}
 } Subsequence;
 
-//--------------------------------FUNÇÕES------------------------------------//
-//funções gerais
-void mostrarSolucao(Solucao s);
-void UpdateAllSubseq(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
-void atualiza(vector<vector<Subsequence>> &subseq_matrix, int start, int end, Data *pData);
-
-//funções da construção em ordem de aparição no método Construção
-vector<int> escolher3NosAleatorios(Data *data);
-vector<int> nosRestantes(Data *data, vector<int> nosEscolhidos);
-vector<custoInsercao> calcularCustoInsercao(Solucao s, vector<int> CL, Data *pData);
-void inserirNaSolucao(Solucao *s, custoInsercao novoNo, vector<int> &CL);
-Solucao Construcao(Data *pData);
-
-//UpdateAllSubseq
-void UpdateAllSubseq(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
-
-//funções para busca local em ordem de aparição no método buscaLocal
-bool bestImprovementSwap_mlp(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
-bool bestImprovement2Opt_mlp(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
-bool bestImprovementOrOpt_mlp(Solucao *s, int tipoOpt, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
-void buscaLocal(Solucao *s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
-
-//Perturbação
-Solucao Perturbacao_mlp(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix);
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void UpdateAllSubseq(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
+void UpdateAllSubseq(Solucao& s, Data *pData, vector<vector<Subsequence>> &subseq_matrix) {
 	int n = subseq_matrix.size();
 	// subsequencias de um unico no
 	for(int i = 0; i < n; i++) {
@@ -92,40 +69,135 @@ void UpdateAllSubseq(Solucao s, Data *pData, vector<vector<Subsequence>> &subseq
 void atualiza(vector<vector<Subsequence>> &subseq_matrix, int start, int end, Data *pData) {
   int n = subseq_matrix.size();
   //start é a posição da primeira modificação e end é a posição da última
-  //refaz o retangulo superior esquerdo
+
+  //refaz região direita do bloco superior esquerdo
   for(int i = 0; i < start; ++i) 
     for(int j = start; j < n; ++j) {
       subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
     }
+
+  //refaz a região esquerda do bloco inferior direito
+  for(int i = n - 1; i > end; --i)
+		for(int j = end; j >= 0; --j)
+			subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  if(x) {
   //refaz o lado direito da região modificada
   for(int i = start; i <= end; ++i) 
     for(int j = i+1; j < n; ++j) 
       subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
-
-  //refaz o retangulo inferior esquerdo
-  for(int i = n - 1; i > end; --i)
-		for(int j = end; j >= 0; --j)
-			subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
     
   //refaz o lado esquerdo da região modificada
   for(int i = end; i >= start; --i)
 		for(int j = i-1; j >= 0; --j)
 			subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
+  }
 }
 
-void mostrarSolucao(Solucao s) {
+void atualizaSwap(vector<vector<Subsequence>> &subseq_matrix, int start, int end, Data *pData) {
+  int n = subseq_matrix.size();
+  //start é a posição da primeira modificação e end é a posição da última
+  x = false;
+  atualiza(subseq_matrix, start, end, pData);
+  x = true;
+
+  //atualiza o lado direito da linha do nó q foi "para trás"
+  for(int i = start+1; i < n; ++i) {
+    subseq_matrix[start][i] = Subsequence::Concatenate(subseq_matrix[start][i-1], subseq_matrix[i][i], pData);
+  }
+
+  //atualiza o lado esquerdo da linha do nó q foi "para trás"
+  for(int i = start-1; i >= 0; --i) {
+    subseq_matrix[start][i] = Subsequence::Concatenate(subseq_matrix[start][i+1], subseq_matrix[i][i], pData);
+  }
+
+  //atualiza o lado direito da linha do nó q foi "para frente"
+  for(int i = end+1; i < n; ++i) {
+    subseq_matrix[end][i] = Subsequence::Concatenate(subseq_matrix[end][i-1], subseq_matrix[i][i], pData);
+  }
+
+  //atualiza o lado esquerdo da linha do nó q foi "para frente"
+  for(int i = end-1; i >= 0; --i) {
+    subseq_matrix[end][i] = Subsequence::Concatenate(subseq_matrix[end][i+1], subseq_matrix[i][i], pData);
+  }
+
+  //refaz o retangulo direito da região entre as subseq trocadas
+  for(int i = start+1; i < end; ++i) 
+    for(int j = end; j < n; ++j) 
+      subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
+    
+  //refaz o lado esquerdo da região modificada
+  for(int i = end-1; i > start; --i)
+		for(int j = start; j >= 0; --j)
+			subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
+}
+
+void atualizaOrOpt(vector<vector<Subsequence>> &subseq_matrix, int best_i, int best_j, int tipoOpt, Data *pData) {
+  //best_i é a posição da primeira modificação e best_j é a posição da última
+  int n = subseq_matrix.size();
+  x = false;
+
+  if(best_i < best_j) {
+    atualiza(subseq_matrix, best_i, best_j, pData);
+    //refaz a região direita dos nós reinseridos
+    for(int i = best_j-tipoOpt+1; i <= best_j; ++i) 
+      for(int j = i+1; j < n; ++j) 
+        subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
+    
+    //refaz a região esquerda dos nós reinseridos
+    for(int i = best_j; i > best_j-tipoOpt; --i)
+		  for(int j = i-1; j >= 0; --j)
+			  subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
+
+    //refaz o retangulo direito do bloco que mudou de posição, mas não foi reinserido
+    for(int i = best_i; i <= best_j-tipoOpt; ++i) 
+      for(int j = best_j-tipoOpt+1; j < n; ++j) 
+        subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
+      
+    //refaz o lado esquerdo da região modificada
+    for(int i = best_j-tipoOpt; i >= best_i; --i)
+      for(int j = best_i-1; j >= 0; --j)
+        subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
+
+  } else {
+    atualiza(subseq_matrix, best_j+1, best_i+tipoOpt-1, pData);
+
+    //refaz a região direita dos nós reinseridos
+    for(int i = best_j+1; i < best_j+1+tipoOpt; ++i) 
+      for(int j = i+1; j < n; ++j) 
+        subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
+    
+    //refaz a região esquerda dos nós reinseridos
+    for(int i = best_j+1+tipoOpt-1; i >= best_j+1; --i)
+      for(int j = i-1; j >= 0; --j)
+        subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
+
+    //refaz o retangulo direito do bloco que mudou de posição, mas não foi reinserido
+    for(int i = best_j+1+tipoOpt; i < best_i+tipoOpt; ++i) 
+      for(int j = best_i+tipoOpt; j < n; ++j) 
+        subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j-1], subseq_matrix[j][j], pData);
+      
+    //refaz o lado esquerdo da região modificada
+    for(int i = best_i+tipoOpt-1; i >= best_j+1+tipoOpt; --i)
+      for(int j = best_j+1+tipoOpt-1; j >= 0; --j)
+        subseq_matrix[i][j] = Subsequence::Concatenate(subseq_matrix[i][j+1], subseq_matrix[j][j], pData);
+  }
+  x = true;
+}
+
+void mostrarSolucao(Solucao& s) {
   for(int i = 0; i < s.ordem.size()-1; ++i) {
     cout << s.ordem[i] << " - ";
   }
   cout << s.ordem[s.ordem.size()-1] << endl;
 }
 
-vector<custoInsercao> calcularCustoInsercao_mlp(Solucao s, vector<int> CL, Data *pData) {
+vector<custoInsercao> calcularCustoInsercao_mlp(int r, vector<int>& CL, Data *pData) {
   vector<custoInsercao> custoInsercao(CL.size());
-  int l = s.ordem.size();
   int a = 0;
   for(auto k : CL) {
-    custoInsercao[a].custo = pData->getDistance(s.ordem[l-1], k);
+    custoInsercao[a].custo = pData->getDistance(r, k);
     custoInsercao[a].noInserido = k;
     ++a;
   }
@@ -137,7 +209,7 @@ void inserirNaSolucao_mlp(Solucao *s, custoInsercao novoNo, vector<int> &CL) {
   for(int i = 0; i < CL.size(); i++) {
     if(CL[i] == novoNo.noInserido) {
       CL.erase(CL.begin()+i);
-      break;
+      return;
     }
   }
 }
@@ -157,7 +229,7 @@ Solucao Construcao(Data *pData) {
   }
 
   while(!CL.empty()) {
-    vector<custoInsercao> custoInsercao = calcularCustoInsercao_mlp(s, CL, pData);
+    vector<custoInsercao> custoInsercao = calcularCustoInsercao_mlp(s.ordem[s.ordem.size()-1], CL, pData);
     sort(custoInsercao.begin(), custoInsercao.end(), check);
     double alpha = (double) rand() / RAND_MAX;
     int porcent = ceil(( alpha * CL.size()) / 4);
@@ -191,10 +263,8 @@ bool bestImprovementSwap_mlp(Solucao *s, Data *pData, vector<vector<Subsequence>
   }
   if(bestDelta < 0) {
     swap(s->ordem[best_i], s->ordem[best_j]);
-    Subsequence aux = subseq_matrix[best_i][best_i];
-    subseq_matrix[best_i][best_i] = subseq_matrix[best_j][best_j];
-    subseq_matrix[best_j][best_j] = aux;
-    atualiza(subseq_matrix, best_i, best_j, pData);
+    swap(subseq_matrix[best_i][best_i], subseq_matrix[best_j][best_j]);
+    atualizaSwap(subseq_matrix, best_i, best_j, pData);
     s->custo += bestDelta;
     return true;
   }
@@ -263,46 +333,42 @@ bool bestImprovementOrOpt_mlp(Solucao *s, int tipoOpt, Data *pData, vector<vecto
 
   if(bestDelta < 0) {
     if(best_i < best_j) {
-      //reinserindo os nós 
       for(int i = 0; i < tipoOpt; i++) {
         s->ordem.insert(s->ordem.begin()+best_j+1, s->ordem[best_i]);
         s->ordem.erase(s->ordem.begin() + best_i);
         subseq_matrix.insert(subseq_matrix.begin()+best_j+1, subseq_matrix[best_i]);
         subseq_matrix.erase(subseq_matrix.begin() + best_i);
       }
-
       //desloca os nós que estão sendo reinseridos para a direita
       for(int i = 0; i < tipoOpt; ++i) {
         subseq_matrix[best_j-i][best_j-i] = subseq_matrix[best_j-i][best_i+tipoOpt-i-1];
       }
-      
-      //ajeita a diagonal principal dos nós que estão entre os nós reinseridos e a posição da reinserção
       for(int i = best_i; i < best_j-tipoOpt+1; ++i) {
-        subseq_matrix[i][i] = subseq_matrix[i][i+tipoOpt];
+        for(int j = 0; j < tipoOpt; ++j) {
+          subseq_matrix[i].erase(subseq_matrix[i].begin());
+          subseq_matrix[i].push_back(subseq_matrix[i][i]);
+        }
       }
-      
-      atualiza(subseq_matrix, best_i, best_j, pData);
+      // atualiza(subseq_matrix, best_i, best_j, pData);
     }else {
-      //reinserindo os nós
       for(int i = 0; i < tipoOpt; i++) {
         s->ordem.insert(s->ordem.begin()+best_j+i+1, s->ordem[best_i+i]);
         s->ordem.erase(s->ordem.begin() + best_i+i+1);
         subseq_matrix.insert(subseq_matrix.begin()+best_j+i+1, subseq_matrix[best_i+i]);
         subseq_matrix.erase(subseq_matrix.begin() + best_i+i+1);
       }
-      
-      //ajeita a diagonal principal dos nós reinseridos
       for(int i = 0; i < tipoOpt; ++i) {
         subseq_matrix[best_j+i+1][best_j+i+1] = subseq_matrix[best_j+i+1][best_i+i];
       }     
-      
-      //ajeita a diagonal principal dos nós que trocaram de posição, mas não porque foram reinseridos
       for(int i = best_j+tipoOpt+1; i <= best_i+tipoOpt-1; ++i) {
-        subseq_matrix[i][i] = subseq_matrix[i][i-tipoOpt];
+        for(int j = 0; j < tipoOpt; ++j) {
+          subseq_matrix[i].erase(subseq_matrix[i].begin()+subseq_matrix[i].size()-1);
+          subseq_matrix[i].insert(subseq_matrix[i].begin(), subseq_matrix[i][i]);
+        }
       }
-      
-      atualiza(subseq_matrix, best_j+1, best_i+tipoOpt-1, pData);
+    // atualiza(subseq_matrix, best_j+1, best_i+tipoOpt-1, pData);
     }
+    atualizaOrOpt(subseq_matrix, best_i, best_j, tipoOpt, pData); 
     s->custo += bestDelta;
     return true;
   }
