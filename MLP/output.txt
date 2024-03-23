@@ -1,2 +1,69 @@
 Média do custo e o tempo em segundos de 10 execuções do algoritmo em cada instância. Intel® Celeron N4020
 
+instances/att48.tsp
+Custo médio: 209320.00; Tempo médio: 0.26341 sec 
+
+instances/berlin52.tsp
+Custo médio: 143721.00; Tempo médio: 0.36056 sec 
+
+instances/brazil58.tsp
+Custo médio: 512361.00; Tempo médio: 0.52542 sec 
+
+instances/dantzig42.tsp
+Custo médio: 12528.00; Tempo médio: 0.14559 sec 
+
+instances/eil101.tsp
+Custo médio: 27584.90; Tempo médio: 6.15175 sec 
+
+instances/eil51.tsp
+Custo médio: 10178.00; Tempo médio: 0.37422 sec 
+
+instances/eil76.tsp
+Custo médio: 17976.00; Tempo médio: 1.75851 sec 
+
+instances/gr48.tsp
+Custo médio: 102378.00; Tempo médio: 0.28587 sec 
+
+instances/gr96.tsp
+Custo médio: 2097170.00; Tempo médio: 3.99005 sec 
+
+instances/hk48.tsp
+Custo médio: 247926.00; Tempo médio: 0.26799 sec 
+
+instances/kroA100.tsp
+Custo médio: 983128.00; Tempo médio: 4.99095 sec 
+
+instances/kroB100.tsp
+Custo médio: 986008.00; Tempo médio: 5.28476 sec 
+
+instances/kroC100.tsp
+Custo médio: 961324.00; Tempo médio: 5.30942 sec 
+
+instances/kroD100.tsp 
+Custo médio: 976965.00; Tempo médio: 5.22962 sec
+
+instances/kroE100.tsp
+Custo médio: 971266.00; Tempo médio: 5.36824 sec 
+
+instances/lin105.tsp
+Custo médio: 603910.00; Tempo médio: 4.57090 sec 
+
+instances/pr107.tsp
+Custo médio: 2026626.00; Tempo médio: 5.82128 sec 
+
+instances/pr76.tsp
+Custo médio: 3455242.00; Tempo médio: 1.54968 sec 
+
+instances/rat99.tsp 
+Custo médio: 58128.00; Tempo médio: 4.94074 sec 
+
+instances/rd100.tsp
+Custo médio: 340047.00; Tempo médio: 4.89868 sec 
+
+instances/st70.tsp
+Custo médio: 20557.00; Tempo médio: 1.12128 sec 
+
+instances/swiss42.tsp
+Custo médio: 22327.00; Tempo médio: 0.15033 sec 
+
+-

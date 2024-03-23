@@ -9,7 +9,7 @@
 #include <bits/stdc++.h>
 
 //definições
-#define max_iter 50
+#define max_iter 10
 
 using namespace std;
 
@@ -275,8 +275,8 @@ bool bestImprovement2Opt_mlp(Solucao *s, Data *pData, vector<vector<Subsequence>
   double bestDelta = 0;
   int best_i, best_j;
   int n = s->ordem.size();
-  for(int i = 1; i < n-3; ++i) {
-    for(int j = i+2; j < n-1; ++j) {
+  for(int i = 1; i < n-2; ++i) {
+    for(int j = i+1; j < n-1; ++j) {
       Subsequence sigma_1, sigma_2;
       sigma_1 = Subsequence::Concatenate(subseq_matrix[0][i-1], subseq_matrix[j][i], pData);
       sigma_2 = Subsequence::Concatenate(sigma_1, subseq_matrix[j+1][n-1], pData);
@@ -472,8 +472,8 @@ int main(int argc, char** argv) {
     melhorSolucao.custo = numeric_limits<int>::max();
     
     int maxIterIls = n;
-    if(n >= 150) 
-      maxIterIls /= 2;
+    if(n > 100) 
+      maxIterIls = 100;
 
     for(int i = 0; i < max_iter; i++) {
       Solucao s = Construcao(pData);
@@ -494,15 +494,15 @@ int main(int argc, char** argv) {
         melhorSolucao = melhorTemporaria;
     }
 
-    mostrarSolucao(melhorSolucao);
-    cout << "Custo: " << melhorSolucao.custo << endl;
-    media += melhorSolucao.custo;
+    // mostrarSolucao(melhorSolucao);
+    // cout << "Custo: " << melhorSolucao.custo << endl;
+    media += (melhorSolucao.custo / 10);
   }
 
-  cout << "Custo médio: " << media/10;
+  cout << "Custo médio: " << fixed << setprecision(2) << media;
   end = clock();
   double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-  cout << "; Tempo médio: " << fixed << time_taken/10 << setprecision(5);
+  cout << "; Tempo médio: " << fixed << setprecision(5) << time_taken/10;
   cout << " sec " << endl << endl;
 
   return 0;
