@@ -483,12 +483,3 @@ void Data::printMatrixDist(){
 		cout << endl;
 	}
 }
-
-
-//códigos meus. Testando o programa
-void Data::printLinha(int x) {
-	for (int i = 1; i < getDimension()+1; i++){
-		cout << getDistance(x, i) << " ";
-	}
-	cout << endl;
-}

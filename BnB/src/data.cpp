@@ -1,4 +1,4 @@
-#include "Data.h"
+#include "data.h"
 
 
 //Inicializador
@@ -13,9 +13,9 @@ distMatrix(NULL){
 		exit( 1 );        
 	}
 
-	if ( qtParam > 4 )    {
+	if ( qtParam > 2 )    {
 		cout << "Too many parameters\n";
-		cout << " ./exeLaRP [Instance] [Upper Bound] [Search method]"  << endl;
+		cout << " ./exeLaRP [Instance]"  << endl;
 		exit( 1 );
 	}
 
@@ -35,7 +35,7 @@ Data::~Data(){
 	delete [] distMatrix;
 }
 
-void Data::read(){
+void Data::readData(){
 
 	ifstream inTSP(instaceName, ios::in);
 
@@ -209,7 +209,7 @@ void Data::read(){
 
 			// Preencher Matriz Distancia
 			for ( int j = 0; j < dimension; j++ ) {
-				for ( int i = j+1; i < dimension; i++ ) {
+				for ( int i = j+1; i < dimension; j++ ) {
 					inTSP >> distMatrix[i][j];
 					distMatrix[j][i] = distMatrix[i][j];
 				}
@@ -476,8 +476,8 @@ string Data::getInstanceName()
 }
 
 void Data::printMatrixDist(){
-	for (int i  = 1; i <= getDimension(); i++){
-		for (int j = 1; j <= getDimension(); j++){
+	for (int i  = 0; i < getDimension(); i++){
+		for (int j = 0; j < getDimension(); j++){
 			cout << getDistance(i,j) << " ";
 		}
 		cout << endl;
