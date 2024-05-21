@@ -1,4 +1,6 @@
 #include <iostream>
+#include <list>
+#include <vector>
 using namespace std;
 
 #include "data.h"
@@ -13,6 +15,25 @@ struct Node {
 	bool feasible; // indica se a solucao do AP_TSP e viavel
 };
 
+void showNode(Node n) {
+	cout << "Arcos proibidos: \n{ "; 
+	for(int i = 0; i < n.forbidden_arcs.size(); ++i) {
+		cout << "{" << n.forbidden_arcs[i].first << ", " << n.forbidden_arcs[i].second << "} "; 
+	}
+	cout << "}\nSubtours:\n{";
+	for(int i = 0; i < n.subtour.size(); ++i) {
+		cout << "{";
+		int j;
+		for(j = 0; j < n.subtour[i].size()-1; ++j) {
+			cout << n.subtour[i][j] << ", ";
+		}
+		cout << n.subtour[i][j] << "} ";
+	}
+	cout << "}\nLower bound: " << n.lower_bound 
+	<< "\nChosen: " << n.chosen
+	<< "\nFeasible: " << n.feasible << endl;
+}
+
 //escolhe o próximo nó
 list<Node>::iterator branchingStrategy(list<Node> &tree, int strategy) {
 	if(strategy > 3 || strategy < 1) {
@@ -23,19 +44,13 @@ list<Node>::iterator branchingStrategy(list<Node> &tree, int strategy) {
 	if(strategy == 1) { //bfs
 		return tree.begin();
 	} else if(strategy == 2) { //dfs
-		return tree.end(); 
+		return (--tree.end()); 
 	}
 	
 	//min lower bound
 	//ainda vendo
 	return tree.end(); 
 }
-
-
-void createCostMatrix(Node node) {
-
-}
-
 
 vector<vector<int>> getSubtour(hungarian_problem_t *p) {
 	vector<vector<int>> sequence; //guarda as subsequences geradas pelo húngaro
@@ -45,39 +60,47 @@ vector<vector<int>> getSubtour(hungarian_problem_t *p) {
 	int a = 0; //o valor dessa variável é sempre igual a quantidade de soubtours - 1
 	int N = p->num_cols; //quantidade de linhas (e colunas) na matriz
 	int **matriz = p->assignment; //matriz que será percorrida
-		
+
 	sequence.push_back({0}); //adiciona o valor 0 pois a linha 0 será a primeira a ser percorrida
 
 	//inicia o vetor de linhas, apenas com o 1º valor igual a -1 (valor = -1 => linha já foi percorrida)
 	for(int x = 0; x < N+1; ++x) {
-		linhas.push_back(x-1);
+	linhas.push_back(x-1);
 	}
-		
+
 	//condição para saber se deve parar
 	while(++count <= N) {
+
 		//for para percorrer as colunas
 		for(int j = 0; j < N; ++j) {
+			bool newSubtour = false;
 			//verifica se o trabalhador "i está fazendo o trabalho j". Nesse caso, se a cidade i está ligado a j
 			if(matriz[i][j]) {
 				//adiciona a cidade na subsequence
-		        sequence[a].push_back(j);
-				//se o valor adicionado é igual ao primeiro, significa que o subtour foi fechado e deve-se começar outro
-    			if((j) == sequence[a][0]) {
-    			    ++a;
-					//procura uma linha disponível para ser percorrida
-    			    for(auto s : linhas) {
-    			        if(s >= 0) {
-    			            linhas[s+1] = -1; //torna a linha que será lida em inválida
-    			            i = s+1; //coloca o iterador das linhas na próxima linha percorrida
-    			            break;
-    			        }
-    			    }
-    			    if(count < N) sequence.push_back({i}); //inicia a nova subsequence
-    			} else {
-    			    i = j; //simplesmente vai para nova linha a ser percorrida
-    			    linhas[j] = -1; //torna a linha que será percorrida em inválida, para evitar que ela seja percorrida de novo
-    			}
-    			break;
+				sequence[a].push_back(j);
+				for(int k = 0; k < sequence[a].size()-1; ++k) {
+					//se o valor adicionado é igual ao primeiro, significa que o subtour foi fechado e deve-se começar outro
+					if((j) == sequence[a][k]) {
+						++a;
+						//procura uma linha disponível para ser percorrida
+						for(auto s : linhas) {
+							if(s >= 0) {
+								linhas[s+1] = -1; //torna a linha que será lida em inválida
+								i = s+1; //coloca o iterador das linhas na próxima linha percorrida
+								break;
+							}
+						}
+						if(count < N) sequence.push_back({i}); //inicia a nova subsequence
+						newSubtour = true;
+						break;
+					} 
+				}
+				if(!newSubtour) {
+					i = j; //simplesmente vai para nova linha a ser percorrida
+					linhas[j] = -1; //torna a linha que será percorrida em inválida, para evitar que ela seja percorrida de novo
+					newSubtour = false;
+				}
+				break;
 			}
 		}
 	}
@@ -125,7 +148,7 @@ void restartCostMatrix(double **cost, list<Node>::iterator node, Data *data) {
 	for(int i = 0; i < node->forbidden_arcs.size(); ++i) {
 		pair<int, int> arc = node->forbidden_arcs[i];
 		cost[arc.first][arc.second] = data->getDistance(arc.first, arc.second);
-	}	
+	}
 }
 
 
@@ -135,11 +158,11 @@ int main(int argc, char** argv) {
 	data->readData();
 
 	// cout << "Choose the branching strategy:" << endl
-	// << "[1] - DFS" << endl
-	// << "[2] - BFS" << endl
+	// << "[1] - BFS" << endl
+	// << "[2] - DFS" << endl
 	// << "[3] - Minimum lower bound" << endl;
 
-	int strategy = 1;
+	int strategy = 2;
 	// cin >> strategy;
 
 	double **cost = new double*[data->getDimension()];
@@ -156,59 +179,91 @@ int main(int argc, char** argv) {
 	hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); // Carregando o problema
 
 	double lower_bound = hungarian_solve(&p);
-	cout << "Obj. value: " << lower_bound << endl;
+	cout << "Lower bound: " << lower_bound << endl;
 
 	// cout << "Assignment" << endl;
 	// hungarian_print_assignment(&p);
 
-	double upper_bound = ILS(data, 50);
 
+	double upper_bound = 108000;//ILS(data, 50);
 	cout << "upper_bound: " << upper_bound << endl;
 
 	Node root;
 	root.lower_bound = lower_bound; //linha desnecessária (dentro do for já consegue isso)
 	
 	Node solution;
-	solution.lower_bound = 99999999;
+	solution.lower_bound = upper_bound;
 
 	list<Node> tree;
 	tree.push_back(root);
-
-	cout << "Antes do while" << endl;
+	int a;
+	cout << "Início do while\n\n";
 	while(!tree.empty()) {
 		auto node = branchingStrategy(tree, strategy);
+		cout << "branchingStrategy\n";
+		showNode(*node);
+		// cin >> a;
 		forbidArcs(cost, node);
 
 		node->subtour = getSolutionHungarian(node, data, cost); //subtours, chosen, feasible, lower bound
+		cout << "getSolutionHungarian\n";
+		showNode(*node);
+		// cin >> a;
+		restartCostMatrix(cost, node, data);
 
 		if(node->lower_bound >= upper_bound) {
-			tree.erase(node);
+			cout << "Upper_bound\n";
+			showNode(*node);
+			// cin >> a;
+			if(node == (--tree.end())) tree.pop_back();
+			else tree.erase(node); 
 			continue;
 		}
 
 		if(node->feasible) {
+			cout << "Feasible\n";
+			showNode(*node);
+			// cin >> a;
 			upper_bound = node->lower_bound;
+			solution = *node;
 		} else {
+			cout << "Not Feasible\n";
+			showNode(*node);
+			// cin >> a;
 			for(int i = 0; i < node->subtour[node->chosen].size()-1; ++i) {
+				cout << "for\n";
+				showNode(*node);
+				// cin >> a;
 				Node n;
 				n.forbidden_arcs = node->forbidden_arcs;
-				
 				pair<int, int> forbidden_arc = {
 					node->subtour[node->chosen][i],
 					node->subtour[node->chosen][i+1]
 				};
-
 				n.forbidden_arcs.push_back(forbidden_arc);
+				
+				cout << "n\n";
+				showNode(n);
+				// cin >> a;
 				tree.push_back(n);
+				cout << "push_back\n";
+				showNode(*node);
+				// cin >> a;
 			}
 		}
 
-		restartCostMatrix(cost, node, data);
-
-		tree.erase(node);
+		cout << "antes do erase\n";
+		showNode(*node);
+		// cin >> a;
+		if(strategy == 1) { tree.pop_front(); } //bfs
+		else if(strategy == 2) { 
+			if(node == (--tree.end())) tree.pop_back();
+			else tree.erase(node); 
+		} //dfs
+		else { } //minimum lower bound		
+		
 	}
 
-	cout << "Depois do while" << endl;
 	cout << "upper_bound: " << upper_bound << endl;
 
 	
