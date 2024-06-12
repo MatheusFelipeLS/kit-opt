@@ -1,0 +1,39 @@
+bayg29.tsp
+BFS - upper_bound: 1610
+DFS - upper_bound: 1610
+Lower Bound - upper_bound: 1610
+
+bays29.tsp
+BFS - upper_bound: 2020
+DFS - upper_bound: 2020
+Lower Bound - upper_bound: 2020
+
+burma14.tsp
+BFS - upper_bound: 3323
+DFS - upper_bound: 3323
+Lower Bound - upper_bound: 3323
+
+fri26.tsp
+BFS - upper_bound: 937
+DFS - upper_bound: 937
+Lower Bound - upper_bound: 937
+
+gr17.tsp
+DFS - upper_bound: 2085
+Lower Bound - upper_bound: 2085
+
+gr21.tsp
+BFS - upper_bound: 2707
+DFS - upper_bound: 2707
+Lower Bound - upper_bound: 2707
+
+gr24.tsp
+BFS - upper_bound: 1272
+DFS - upper_bound: 1272
+Lower Bound - upper_bound: 1272
+
+ulysses16.tsp
+DFS - upper_bound: 6859
+Lower Bound - upper_bound: 6859
+
+ulysses22.tsp

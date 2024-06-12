@@ -196,7 +196,6 @@ double BnB(Data *data, double** cost, int strategy) {
 					node.subtour[node.chosen][i+1]
 				};
 				n.forbidden_arcs.push_back(forbidden_arc);
-				
 				if(strategy != 3) tree.push_back(n);
 				else treePq.push(n);
 			}
@@ -229,7 +228,6 @@ int main(int argc, char** argv) {
 	vector<string> strategies = {"BFS", "DFS", "Lower Bound"};
 	double upper_bound = BnB(data, cost, strategy);
 	cout << strategies[strategy-1] << " - upper_bound: " << upper_bound << endl;
-	strategy++;
 
 	for (int i = 0; i < data->getDimension(); i++) delete [] cost[i];
 	delete [] cost;

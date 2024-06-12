@@ -11,7 +11,7 @@ typedef struct Solution {
     double cost = 0;
 } Solution;
 
-struct custoInsercao {
+struct InsertionCost {
     int noInserido;
     int arestaRemovida;
     double cost;

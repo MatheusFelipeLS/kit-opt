@@ -57,24 +57,24 @@ vector<int> nosRestantes(Data *data, vector<int> nosEscolhidos) {
 	return nos;
 }
 
-vector<custoInsercao> calcularCustoInsercao(Solution s, vector<int> CL, Data *pData) {
-  vector<custoInsercao> custoInsercao((s.sequence.size() - 1) * CL.size());
+vector<InsertionCost> calcularInsertionCost(Solution s, vector<int> CL, Data *pData) {
+  vector<InsertionCost> InsertionCost((s.sequence.size() - 1) * CL.size());
   int l = 0;
   int a;
   for(int a = 0; a < s.sequence.size() - 1; a++) {
     int i = s.sequence[a];
     int j = s.sequence[a + 1];
     for (auto k : CL) {
-      custoInsercao[l].cost = pData->getDistance(i, k) + pData->getDistance(j, k) - pData->getDistance(i, j);
-      custoInsercao[l].noInserido = k;
-      custoInsercao[l].arestaRemovida = a;
+      InsertionCost[l].cost = pData->getDistance(i, k) + pData->getDistance(j, k) - pData->getDistance(i, j);
+      InsertionCost[l].noInserido = k;
+      InsertionCost[l].arestaRemovida = a;
       l++;
     }
   }
-  return custoInsercao;
+  return InsertionCost;
 }
 
-void inserirNaSolucao(Solution *s, custoInsercao novoNo, vector<int> &CL) {
+void inserirNaSolucao(Solution *s, InsertionCost novoNo, vector<int> &CL) {
   s->sequence.insert(s->sequence.begin() + novoNo.arestaRemovida + 1, novoNo.noInserido);
   for(int i = 0; i < CL.size(); i++) {
     if(CL[i] == novoNo.noInserido) {
@@ -84,7 +84,7 @@ void inserirNaSolucao(Solution *s, custoInsercao novoNo, vector<int> &CL) {
   }
 }
 
-bool check(custoInsercao i, custoInsercao j){
+bool check(InsertionCost i, InsertionCost j){
   return i.cost < j.cost;
 }
 
@@ -94,11 +94,11 @@ Solution Construcao(Data *pData) {
   s.sequence = escolher3NosAleatorios(pData);
   vector<int> CL = nosRestantes(pData, s.sequence);
   while(!CL.empty()) {
-    vector<custoInsercao> custoInsercao = calcularCustoInsercao(s, CL, pData);
-    sort(custoInsercao.begin(), custoInsercao.end(), check);  
+    vector<InsertionCost> InsertionCost = calcularInsertionCost(s, CL, pData);
+    sort(InsertionCost.begin(), InsertionCost.end(), check);  
     double alpha = (double) rand() / RAND_MAX;
-    int selecionado = rand() % ((int) ceil(alpha * custoInsercao.size()));
-    inserirNaSolucao(&s, custoInsercao[selecionado], CL);
+    int selecionado = rand() % ((int) ceil(alpha * InsertionCost.size()));
+    inserirNaSolucao(&s, InsertionCost[selecionado], CL);
   } 
   s.cost = calcular_dist_total(s, pData);
   return s;
@@ -211,15 +211,13 @@ bool bestImprovementOrOpt(Solution *s, int tipoOpt, Data *pData) {
 
   if(bestDelta < 0) {
     if(best_i < best_j) {
-      for(int i = 0; i < tipoOpt; i++) {
-        s->sequence.insert(s->sequence.begin()+best_j+1, s->sequence[best_i]);
-        s->sequence.erase(s->sequence.begin() + best_i);
-      }
-    }else {
-      for(int i = 0; i < tipoOpt; i++) {
-        s->sequence.insert(s->sequence.begin()+best_j+i+1, s->sequence[best_i+i]);
-        s->sequence.erase(s->sequence.begin() + best_i+i+1);
-      }
+      s->sequence.insert(s->sequence.begin()+best_j+1, s->sequence.begin()+best_i, s->sequence.begin()+best_i+tipoOpt);
+      s->sequence.erase(s->sequence.begin()+best_i, s->sequence.begin()+best_i+tipoOpt);
+    } else {
+      vector<int> vecAux;
+      vecAux.insert(vecAux.begin(), s->sequence.begin()+best_i, s->sequence.begin()+best_i+tipoOpt);
+      s->sequence.erase(s->sequence.begin()+best_i, s->sequence.begin()+best_i+tipoOpt);
+      s->sequence.insert(s->sequence.begin()+best_j+1, vecAux.begin(), vecAux.end());
     }
     s->cost += bestDelta;
     return true;
