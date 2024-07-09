@@ -8,11 +8,11 @@ using namespace std;
 #include "ILS.h"
 
 struct Node {
-	vector<pair<int, int>> forbidden_arcs; // lista de arcos proibidos do no
-	vector<vector<int>> subtour; // conjunto de subtours da solucao
-	double lower_bound; // cost total da solucao do algoritmo hungaro
-	int chosen; // indice do menor subtour
-	bool feasible; // indica se a solucao do AP_TSP e viavel
+	vector<pair<int, int>> forbidden_arcs; // lista de arcos proibidos do nó
+	vector<vector<int>> subtour; // conjunto de subtours da solução
+	double lower_bound; // custo da solucao do algoritmo húngaro
+	int chosen; // índice do menor subtour
+	bool feasible; // indica se a solucao do AP_TSP é viável
 };
 
 void showNode(Node n) {
