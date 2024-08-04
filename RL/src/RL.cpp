@@ -107,7 +107,6 @@ vector<double> RL(vector<vector<double>> &cost, vector<double> &lambda, vector<p
   feasible = stop;
   lb = best_obj_value;
   edges = best_edges;
-  cin >> g;
   return best_lambda;
 }
 
