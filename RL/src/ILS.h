@@ -18,8 +18,9 @@ struct InsertionCost {
 };
 
 double ILS(Data *data, int max_iter);
+
 void showSolution(Solution s);
-int calcular_dist_total(Solution s, Data *pData);
+double calcular_dist_total(Solution s, Data *pData);
 vector<int> escolher3NosAleatorios(Data *data);
 vector<int> nosRestantes(Data *data, vector<int> nosEscolhidos);
 vector<InsertionCost> calcularInsertionCost(Solution s, vector<int> CL, Data *pData);

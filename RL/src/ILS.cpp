@@ -7,7 +7,7 @@ void showSolution(Solution s) {
   cout << s.sequence[s.sequence.size()-1] << endl;
 }
 
-int calcular_dist_total(Solution s, Data *pData) {
+double calcular_dist_total(Solution s, Data *pData) {
   s.cost = 0;
   for(int i = 0; i < s.sequence.size()-1; i++) {
     s.cost += pData->getDistance(s.sequence[i], s.sequence[i+1]);
