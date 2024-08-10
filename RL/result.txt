@@ -1,0 +1,94 @@
+instances/att48.tsp
+BFS - Cost: 10628
+DFS - Cost: 10628
+Lower Bound - Cost: 10628
+
+instances/bayg29.tsp
+BFS - Cost: 1610
+DFS - Cost: 1610
+Lower Bound - Cost: 1610
+
+instances/bays29.tsp
+BFS - Cost: 2020
+DFS - Cost: 2020
+Lower Bound - Cost: 2020
+
+instances/berlin52.tsp
+BFS - Cost: 7542
+DFS - Cost: 7542
+Lower Bound - Cost: 7542
+
+instances/brazil58.tsp
+BFS - Cost: 25395
+DFS - Cost: 25395
+Lower Bound - Cost: 25395
+
+instances/burma14.tsp
+BFS - Cost: 3323
+DFS - Cost: 3323
+Lower Bound - Cost: 3323
+
+instances/dantzig42.tsp
+BFS - Cost: 699
+DFS - Cost: 699
+Lower Bound - Cost: 699
+
+instances/eil51.tsp
+BFS - Cost: 426
+DFS - Cost: 426
+Lower Bound - Cost: 426
+
+instances/eil76.tsp
+BFS - Cost: 538
+DFS - Cost: 538
+Lower Bound - Cost: 538
+
+instances/fri26.tsp
+BFS - Cost: 937
+DFS - Cost: 937
+Lower Bound - Cost: 937
+
+instances/gr17.tsp
+BFS - Cost: 2085
+DFS - Cost: 2085
+Lower Bound - Cost: 2085
+
+instances/gr21.tsp
+BFS - Cost: 2707
+DFS - Cost: 2707
+Lower Bound - Cost: 2707
+
+instances/gr24.tsp
+BFS - Cost: 1272
+DFS - Cost: 1272
+Lower Bound - Cost: 1272
+
+instances/gr48.tsp
+BFS - Cost: 5046
+DFS - Cost: 5046
+Lower Bound - Cost: 5046
+
+instances/hk48.tsp
+BFS - Cost: 11461
+DFS - Cost: 11461
+Lower Bound - Cost: 11461
+
+instances/pr76.tsp
+
+instances/st70.tsp     
+BFS - Cost: 675
+
+instances/swiss42.tsp 
+BFS - Cost: 1273
+DFS - Cost: 1273
+Lower Bound - Cost: 1273
+
+instances/ulysses16.tsp
+BFS - Cost: 6859
+DFS - Cost: 6859
+Lower Bound - Cost: 6859
+
+instances/ulysses22.tsp 
+BFS - Cost: 7013
+DFS - Cost: 7013
+Lower Bound - Cost: 7013

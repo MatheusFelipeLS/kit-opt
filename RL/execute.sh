@@ -7,11 +7,11 @@ for instance in instances/*; do
 	echo $instance >> ./result.txt
 
 	echo "Running $instance"
-	echo "Instance $k of 9" 
+	echo "Instance $k of 20" 
 
 	./rl ${instance} | awk "{print $1}" >> ./result.txt
 
 	k=$(($k + 1))
 done
 
-echo "-" >> ./output.txt
+echo "-" >> ./result.txt

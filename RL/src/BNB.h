@@ -30,4 +30,3 @@ void forbidArcs(vector<vector<double>> &cost_matrix, Node *node);
 void restartCostMatrix(vector<vector<double>> &cost_matrix, Node *node, Data *data);
 
 void printCostMatrix(vector<vector<double>> &cost);
-double calcular_dist_total_rl(vector<pair<int, int>> s, Data *data);

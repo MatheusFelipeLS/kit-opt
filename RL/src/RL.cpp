@@ -1,21 +1,23 @@
 #include "RL.h"
 
 void addPenalty(vector<vector<double>> &cost, vector<double> &lambda) {
-	for(int i = 1; i < cost.size(); i++) {
-		for(int j = 1; j < cost[i].size(); j++) {
+	for(int i = 0; i < cost.size(); i++) {
+		for(int j = 0; j < cost[i].size(); j++) {
 			cost[i][j] -= (lambda[i] + lambda[j]); 
 		}
 	}
 }
 
-void attLambda(vector<double> &subgradient, vector<double> &lambda, double UB, double LB, double epsilon) {
-  int denominador = getSumOfTheSquareOfCoordinates(subgradient);
+void attLambda(vector<int> &subgradient, vector<double> &lambda, double UB, double LB, double epsilon) {
+  double denominador = getSumOfTheSquareOfCoordinates(subgradient);
+  double passo = (UB - LB) * (epsilon / denominador);
+  // cout << "passo: " << passo << endl;
 	for(int i = 0; i < lambda.size(); i++) {
-		lambda[i] = lambda[i] + (epsilon * (UB - LB) * subgradient[i] / denominador);
+		lambda[i] += (subgradient[i] * passo);
 	}
 }
 
-vector<int>degreeOfNodes(vector<pair<int, int>> &edges) {
+vector<int> degreeOfNodes(vector<pair<int, int>> &edges) {
   vector<int> degree(edges.size());
   for(int i = 0; i < edges.size(); i++) {
     degree[edges[i].first]++;
@@ -25,9 +27,18 @@ vector<int>degreeOfNodes(vector<pair<int, int>> &edges) {
   return degree;
 }
 
-vector<double> getSubgradient(vector<int> &degree) {
+double extraPenalty(vector<double> &lambda) {
+  double extraCost = 0;
+  for(int i = 0; i < lambda.size(); i++) {
+    extraCost += lambda[i];
+  }
+
+  return (2 * extraCost);
+}
+
+vector<int> getSubgradient(vector<int> &degree) {
   int n = degree.size();
-  vector<double> subgradient(n);
+  vector<int> subgradient(n);
 
   for(int i = 1; i < n; i++) {
     subgradient[i] = 2 - degree[i];
@@ -36,15 +47,15 @@ vector<double> getSubgradient(vector<int> &degree) {
   return subgradient;
 }
 
-double getSumOfTheSquareOfCoordinates(vector<double> &subgradient) {
-  double sum = 0;
-  for(int i = 1; i < subgradient.size(); i++) {
+int getSumOfTheSquareOfCoordinates(vector<int> &subgradient) {
+  int sum = 0;
+  for(int i = 0; i < subgradient.size(); i++) {
     sum += (subgradient[i]*subgradient[i]);
   }
   return sum;
 }
 
-bool isValid(vector<int> &degree) {
+bool isTour(vector<int> &degree) {
   for(int i = 0; i < degree.size(); i++) {
     if(degree[i] != 2) return false;
   }
@@ -53,8 +64,8 @@ bool isValid(vector<int> &degree) {
 }
 
 void removePenalty(vector<vector<double>> &cost, vector<double> &lambda) {
-	for(int i = 1; i < cost.size(); i++) {
-		for(int j = 1; j < cost[i].size(); j++) {
+	for(int i = 0; i < cost.size(); i++) {
+		for(int j = 0; j < cost[i].size(); j++) {
 			cost[i][j] += (lambda[i] + lambda[j]); 
 		}
 	}
@@ -67,27 +78,32 @@ vector<double> RL(vector<vector<double>> &cost, vector<double> &lambda, vector<p
   vector<pair<int, int>> best_edges;
   vector<double> best_lambda;
   bool stop = false;
+  double obj_value = 0;
 
-  while((epsilon > epsilon_min) && !stop) {
+  while((epsilon > epsilon_min) && !stop && (ub - obj_value >= 0.000001)) {
     addPenalty(cost, lambda);
 
     Kruskal k = Kruskal((vvi&) cost);
-    double obj_value = k.MST(lambda.size());
+    obj_value = k.MST(lambda.size());
     vector<pair<int, int>> new_edges = k.getEdges();
+    obj_value += extraPenalty(lambda);
 
     removePenalty(cost, lambda);
 
     vector<int> degree = degreeOfNodes(new_edges);
 
-    stop = isValid(degree);
+    stop = isTour(degree);
     if(stop) {
+      feasible = stop;
       best_obj_value = obj_value;
       best_lambda = lambda;
       best_edges = new_edges;
-      continue;
+      break;
     }
 
-    vector<double> subgradient = getSubgradient(degree);
+
+    vector<int> subgradient = getSubgradient(degree);
+
     attLambda(subgradient, lambda, ub, obj_value, epsilon);
 
     if(obj_value > best_obj_value) {
@@ -104,6 +120,7 @@ vector<double> RL(vector<vector<double>> &cost, vector<double> &lambda, vector<p
     }
   }
 
+
   feasible = stop;
   lb = best_obj_value;
   edges = best_edges;
@@ -118,8 +135,16 @@ void printLambda(vector<double> &lambda) {
   cout << endl;
 }
 
+void printSubgradient(vector<int> &subgradient) {
+  cout << "Subgradient: ";
+  for(int i = 0; i < subgradient.size(); i++) {
+    cout << subgradient[i] << " ";
+  }
+  cout << endl;
+}
+
 void printDegree(vector<int> &degree) {
-  cout << "degree: ";
+  cout << "Degree: ";
   for(int i = 0; i < degree.size(); i++) {
     cout << degree[i] << " ";
   }
@@ -127,7 +152,9 @@ void printDegree(vector<int> &degree) {
 }
 
 void printMST(vector<pair<int, int>> &edges) {
+  cout << "MST:\n";
   for(int i = 0; i < edges.size(); ++i) {
 		cout << "f: " << edges[i].first << " s: " << edges[i].second << endl; 
 	}
 }
+

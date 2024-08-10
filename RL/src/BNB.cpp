@@ -1,15 +1,5 @@
 #include "BNB.h"
 
-void showNode(Node n) {
-	cout << "Arcos proibidos: \n{ "; 
-	for(int i = 0; i < n.forbidden_arcs.size(); ++i) {
-		cout << "{" << n.forbidden_arcs[i].first << ", " << n.forbidden_arcs[i].second << "} "; 
-	}
-	cout << "}\nLower bound: " << n.lower_bound 
-	<< "\nChosen: " << n.chosen
-	<< "\nFeasible: " << n.feasible << endl;
-}
-
 //escolhe o próximo nó
 Node branchingStrategy(vector<Node> &tree, int strategy) {
 	if(strategy < 1 || strategy > 2) {
@@ -32,7 +22,7 @@ Node branchingStrategy(vector<Node> &tree, int strategy) {
 void forbidArcs(vector<vector<double>> &cost, Node *node) {
 	for(int i = 0; i < node->forbidden_arcs.size(); ++i) {
 		pair<int, int> arc = node->forbidden_arcs[i];
-		cost[arc.first][arc.second] = 99999000;
+		cost[arc.first][arc.second] = 99990000;
 	}
 }
 
@@ -88,37 +78,42 @@ double BnB(Data *data, vector<vector<double>> &cost, double ub, int strategy) {
 			node = treePq.top();
 			treePq.pop();
 		}
-
 		forbidArcs(cost, &node);
 
 		node.lambda = RL(cost, node.lambda, node.edges, ub, node.lower_bound, node.feasible);
-		
+
 		restartCostMatrix(cost, &node, data);
 
 		if(node.lower_bound >= ub) {
 			continue;
-		}
+		} else if(node.lower_bound > lower_bound) {
+			lower_bound = node.lower_bound;
+		} 
 
 		if(node.feasible) {
-			if(node.lower_bound > lower_bound) {
-				lower_bound = node.lower_bound;
-			}
-
-			double aux = calcular_dist_total_rl(node.edges, data);
-			if(aux < ub) {
-				ub = aux;
+			if(node.lower_bound < ub) {
+				ub = node.lower_bound;
 			}
 		} else {
 			vector<int> degree = degreeOfNodes(node.edges);
 			node.chosen = highestDegreeNode(degree);
 			vector<int> arcs = nextForbidden(node.chosen, &node);
+
 			for(int i = 0; i < arcs.size(); ++i) {
 				Node n = node;
+
 				pair<int, int> forbidden_arc = {
 					node.chosen,
 					arcs[i]
 				};
 				n.forbidden_arcs.push_back(forbidden_arc);
+
+				forbidden_arc = {
+					arcs[i],
+					node.chosen
+				};
+				n.forbidden_arcs.push_back(forbidden_arc);
+
 				if(strategy != 3) tree.push_back(n);
 				else treePq.push(n);
 			}
@@ -128,21 +123,24 @@ double BnB(Data *data, vector<vector<double>> &cost, double ub, int strategy) {
 	return ub;
 }
 
+void showNode(Node n) {
+	cout << "Arcos proibidos: \n{ "; 
+	for(int i = 0; i < n.forbidden_arcs.size(); ++i) {
+		cout << "{" << n.forbidden_arcs[i].first << ", " << n.forbidden_arcs[i].second << "} "; 
+	}
+	cout << "}\nLower bound: " << n.lower_bound 
+	<< "\nChosen: " << n.chosen
+	<< "\nFeasible: " << n.feasible << endl;
+}
 
 void printCostMatrix(vector<vector<double>> &cost) {
 	cout << "Cost: " << endl;
 	for(int i = 0; i < cost.size(); i++) {
 		for(int j = 0; j < cost[i].size(); j++) {
+			if(cost[i][j] < 1000) cout << " ";
+			if(cost[i][j] < 100) cout << " ";
 			cout << cost[i][j] << " ";
 		}
 		cout << endl;
 	}
-}
-
-double calcular_dist_total_rl(vector<pair<int, int>> s, Data *data) {
-  double cost = 0;
-  for(int i = 0; i < s.size(); i++) {
-    cost += data->getDistance(s[i].first, s[i].second);
-  }
-  return cost;
 }
