@@ -106,9 +106,6 @@ void STSP_Solve(Data *data, string instanceName, double ub)
     }
 
     printResults(STSP, instanceName, timeAfter-timeBefore);
-    // cout << "Chegou aqui\n";
-    // int t;
-    // cin >> t;
 	printSolution(STSP, x, dimension);
 	//printResultsToFile(STSP, instanceName, timeAfter-timeBefore);
     /******************************************************/

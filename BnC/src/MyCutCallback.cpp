@@ -64,7 +64,7 @@ void MyCutCallback::main()
 	
 	if (cutSetPool.empty() && depth <= 7) {
 		//cutSetPool = MinCut(x_edge, n);
-		// cutSetPool = MultipleMinCut(x_edge, n); //isso não estava comentado
+		// cutSetPool = MultipleMinCut(x_edge, n);
 	}
 
 	/***************** Creating the constraints ***************/

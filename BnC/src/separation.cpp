@@ -4,7 +4,7 @@ void printEntrada(double** x, int n);
 void showS(vector<vector<int>> &S);
 void showVector(vector<int> &v);
 void showBv(vector<double> &v);
-void nanFilter(double** x, int n);
+void filterX(double** x, int n);
 
 int usedNodes(const vector<vector<int>> &subtours) {
   int size = 0;
@@ -32,96 +32,71 @@ int nextNode(vector<vector<int>> &subtours) {
   return noUsedNode;
 }
 
-vector<int> createCandidateList(vector<vector<int>> &subtours, int n) {
-  vector<int> CL(n);
+vector<bool> createCandidateList(int n, int node) {
+  vector<bool> CL(n, true);
 
-  for(int i = 0; i < n; i++) {
-    CL[i] = i;
-  }
-
-  for(int i = 0; i < subtours.size(); i++) {
-    for(int j = 0; j < subtours[i].size(); j++) {
-      CL[subtours[i][j]] = 0;
-    }
-  }
+  CL[node] = false;
 
   return CL;
 }
 
-vector<int> mb(double** x, int n, int initialNode, vector<vector<int>> &subtours) {
-  int t;
-
-  vector<int> Smin = {initialNode};
-  vector<int> S = Smin;
-  vector<int> CL = createCandidateList(subtours, n);
+double calculateMinCut(double** x, int n, int node) {
   double cutmin = 0;
-  double cutval;
-  vector<double> bv(n); //max back de cada nó
-
-  bv[0] = -1;
-  CL[initialNode] = 0;
-
-  //somando o grau dos nós para achar o corte mínimo
-  for(int i = 1; i < n; i++) {
-    if(CL[i]) {
-      cutmin += x[initialNode][i] + x[i][initialNode];
-      bv[i] += x[initialNode][i] + x[i][initialNode];
+  for(int i = 0; i < n; i++) {
+    if(i == node) {
+      cutmin += x[node][i] + x[i][node];
     }
   }
 
-  cout << "bv ";
-  showBv(bv);
+  return cutmin;
+}
+
+void calculateBv(double** x, int n, vector<double> &bv, vector<int> &S, vector<bool> &CL) {
+  for(int i = 0; i < S[S.size()-1]; i++) {
+    if(CL[i]) bv[i] += x[i][S[S.size()-1]]; 
+  }
+
+  for(int i = S[S.size()-1]; i < n; i++) {
+    if(CL[i]) bv[i] += x[S[S.size()-1]][i];
+  }
+}
+
+int getNodeWithBiggestMaxBack(const vector<double> &bv) {
+  int idxBiggestCut = 0;
+  for(int i = 1; i < bv.size(); i++) {
+    if(bv[i] > bv[idxBiggestCut]) idxBiggestCut = i;
+  }
+
+  return idxBiggestCut;
+}
+
+vector<int> mb(double** x, int n, int initialNode, vector<vector<int>> &subtours) {
+  vector<int> Smin = {initialNode};
+  vector<int> S = {initialNode};
+  vector<bool> CL = createCandidateList(n, initialNode);
+  vector<double> bv(n); //max back de cada nó
+  double cutmin = calculateMinCut(x, n, initialNode);
+  double cutval;
+
+  bv[initialNode] = -1;
   cutval = cutmin;
 
   while(S.size() < n) {
-    cout << "S ";
-    showVector(S);
-    cout << "bv ";
-    showBv(bv);
+    calculateBv(x, n, bv, S, CL);
 
-    int idxBiggestCut = 0;
-    for(int i = 1; i < CL.size(); i++) {
-      if(bv[CL[i]] > bv[CL[idxBiggestCut]]) idxBiggestCut = i;
-    }
+    int idxBiggestCut = getNodeWithBiggestMaxBack(bv);
 
-    S.push_back(CL[idxBiggestCut]);
-    cutval += 2 - (2 * bv[CL[idxBiggestCut]]);
+    S.push_back(idxBiggestCut);
+    cutval += 2 - (2 * bv[idxBiggestCut]);
 
-    bv[CL[idxBiggestCut]] = -1;
-    CL[idxBiggestCut] = 0;
+    bv[idxBiggestCut] = -1;
+    CL[idxBiggestCut] = false;
 
     if(cutval < cutmin) {
       cutmin = cutval;
       Smin = S;
-      int idxNoUsedNode = 1;
-      double degree = -999999999;
-      for(int i = 1; i < n; i++) {
-        if(CL[i] && bv[i] > degree) {
-          idxNoUsedNode = i;
-          degree = bv[i];
-        }
-      }
-
-      S.push_back(CL[idxNoUsedNode]);
-      CL[idxNoUsedNode] = 0;
-
-      for(int i = 1; i < n; i++) {
-        if(CL[i]) {
-          cutval += x[S[S.size()-1]][i] + x[i][S[S.size()-1]];
-        }
-      }
-    }
-
-    for(int i = 0; i < n; i++) {
-      if(CL[i]) {
-        bv[i] += x[S[S.size()-1]][i] + x[i][S[S.size()-1]];
-      }
     }
   }
-
-  cout << "Smin ";
-  showVector(Smin);
-  // cin >> t;
 
   return Smin;
 }
@@ -130,12 +105,7 @@ vector<vector<int>> MaxBack(double** x, int n) {
   vector<vector<int>> subtours;
   int t;
 
-  nanFilter(x, n);
-
-  cout << "Entrada maxback\n";
-  printEntrada(x, n);
-  // cin >> t;
-
+  filterX(x, n);
 
   int node = 0;
 
@@ -147,9 +117,8 @@ vector<vector<int>> MaxBack(double** x, int n) {
     node = nextNode(subtours);
   }
 
-  cout << "subtours\n";
-  showS(subtours); 
-  cin >> t; 
+  if(subtours.size() == 1) return {};
+
   return subtours;
 }
 
@@ -159,11 +128,11 @@ vector<vector<int>> MinCut(double** x, int n) {
   return m;
 }
 
-void nanFilter(double** x, int n) {
-  //filtrando NaN
+void filterX(double** x, int n) {
+  //filtrando NaN e valores menores que EPSILON
   for(int i = 0; i < n; i++) {
     for(int j = 0; j < n; j++) {
-      if(isnan(x[i][j])) x[i][j] = 0;
+      if(isnan(x[i][j]) || x[i][j] < EPSILON) x[i][j] = 0;
     }
   }
 }
