@@ -30,7 +30,7 @@ double calculateCutOfThePhase(double** x, int n, vector<vector<int>> &S);
 
 void merge2LastSets(vector<vector<int>>& V, vector<vector<int>> &S);
 
-vector<int> SingleMinCut(double** x, int n, int initialNode);
+vector<vector<int>> SingleMinCut(double** x, int n, int initialNode);
 
 
 #endif

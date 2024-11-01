@@ -9,13 +9,20 @@ void showS(vector<vector<int>> &S) {
   }
 }
 
-int qtUsedNodes2(const vector<vector<int>> &subtours) {
+int qtUsedNodes2(const vector<vector<int>> &subtours, int n) {
   int size = 0;
+  vector<bool> V(n, false);
+
   for(int i = 0; i < subtours.size(); i++) {
     for(int j = 0; j < subtours[i].size(); j++) {
-      size++;
+      V[subtours[i][j]] = true;
     }
   }
+
+  for(int i = 0; i < V.size(); i++) {
+    if(V[i]) size++;
+  }
+
   return size;
 }
 
@@ -51,41 +58,26 @@ void forbiddenNodes(vector<bool> &CL, vector<vector<int>> &A) {
 
 
 vector<vector<int>> MinimumCutPhase(double **x, int n, vector<vector<int>> &V, int idxInitialSet) {
-  int t;
-
   vector<bool> CL(n, true);
   vector<double> degreeOfConnection(n);
   vector<vector<int>> A = {{}};
 
   A[0].insert(A[0].end(), V[idxInitialSet].begin(), V[idxInitialSet].end());
 
-  int sizeV = qtUsedNodes2(V);
+  int sizeV = qtUsedNodes2(V, n);
   int sizeA = 1;
   while(sizeA < sizeV) {
     forbiddenNodes(CL, A);
 
-    // cout << "\nCL: ";
-    // for(int t = 0; t < CL.size(); t++) cout << CL[t] << " ";
-
     calculateDegreeOfConnection(x, degreeOfConnection, A, V, CL);
 
-    // cout << "\nDOC: ";
-    // for(int t = 0; t < CL.size(); t++) cout << degreeOfConnection[t] << " ";
-
     int idx = mostTightlyConnectedVertex(degreeOfConnection);
-
-    // cout << "\nidx: " << idx << endl;
 
     degreeOfConnection[idx] = 0;
     A.insert(A.end(), V.begin()+idx, V.begin()+idx+1);
 
-    // showS(A);
-
-    sizeA = qtUsedNodes2(A);
+    sizeA = qtUsedNodes2(A, n);
   }
-
-  // cout << "\nDigite t: ";
-  // cin >> t;
 
   return A;
 }
@@ -122,7 +114,7 @@ void merge2LastSets(vector<vector<int>>& V, vector<vector<int>> &S) {
     }
   }
 
-  for(int i = V.size()-1; i > 0; i--) {
+  for(int i = V.size()-1; i >= 0; i--) {
     if(V[i][0] == S[S.size()-1][0] || V[i][0] == S[S.size()-2][0]) {
       idx2 = i;
       break;
@@ -134,31 +126,26 @@ void merge2LastSets(vector<vector<int>>& V, vector<vector<int>> &S) {
 }
 
 
-vector<int> SingleMinCut(double** x, int n, int initialNode) {
-  int t;
-
+vector<vector<int>> SingleMinCut(double** x, int n, int initialNode) {
   vector<vector<int>> V(n);
-  vector<int> Vmin;
+  vector<vector<int>> sets;
   double cutOfThePhase;
-  double cutmin = 99999999;
-  int set = initialNode;
+  double cutmin = 2;
+
   for(int i = 0; i < n; i++) V[i].push_back(i);
 
-
   while(V.size() > 1) {
-    vector<vector<int>> S = MinimumCutPhase(x, n, V, set);
+    vector<vector<int>> S = MinimumCutPhase(x, n, V, initialNode);
 
     cutOfThePhase = calculateCutOfThePhase(x, n, S);
 
     if(cutOfThePhase < 2) {
-      return S[S.size()-1];
-    }else if(cutOfThePhase < cutmin) {
-      cutmin = cutOfThePhase;
-      Vmin = S[S.size()-1];
+      sets.push_back(S[S.size()-1]);
+      if(qtUsedNodes2(sets, n) >= n/2) return sets;
     }
 
     merge2LastSets(V, S);
   }
 
-  return Vmin;
+  return sets;
 }

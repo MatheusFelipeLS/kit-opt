@@ -51,11 +51,16 @@ bool allNodesOnSubtours(int n, vector<vector<int>> &subtours) {
 }
 
 
-int nodeOutsideSubtour(vector<vector<int>> &subtours) {
+int nodeOutsideSubtour(vector<vector<int>> &subtours, vector<bool> &possibleNodes) {
   int noUsedNode = 0;
 
   for(int i = 0; i < subtours.size(); i++) {
     for(int j = 0; j < subtours[i].size(); j++) {
+      if(possibleNodes[j] == false) {
+        noUsedNode++;
+        i = -1;
+        break;
+      }
       if(subtours[i][j] == noUsedNode) {
         noUsedNode++;
         i = -1;
@@ -64,7 +69,14 @@ int nodeOutsideSubtour(vector<vector<int>> &subtours) {
     }
   }
 
+  possibleNodes[noUsedNode] = false;
   return noUsedNode;
+}
+
+int nodeInSubtour(vector<vector<int>> &subtours, vector<bool> &possibleNodes) {
+
+  possibleNodes[subtours[subtours.size()-1][0]] = false;
+  return subtours[subtours.size()-1][0];
 }
 
 void showSubtours(vector<vector<int>> &subtours) {
@@ -76,23 +88,46 @@ void showSubtours(vector<vector<int>> &subtours) {
   }
 }
 
+bool sInSubtours(vector<vector<int>> &subtours, vector<int> &S) {
+  for(int i = 0; i < subtours.size(); i++) {
+    for(int j = 0; j < subtours[i].size(); j++) {
+      if(S.size() != subtours[i].size()) break;
+
+      if(S[j] != subtours[i][j]) break;
+      if(j == subtours[i].size()-1) return false;
+    }
+  }
+
+  return true;
+}
+
+void getComplementary(vector<vector<int>> &S, int n) {
+  vector<bool> barra(n, false);
+  for(int i = 0; i < S.size(); i++) {
+    for(int j = 0; j < S[i].size(); j++) {
+      barra[S[i][j]] = true;
+    }
+  }
+
+  vector<int> sla;
+  for(int i = 0; i < n; i++) {
+    if(!barra[i]) sla.push_back(i);
+  }
+
+  S.push_back(sla);
+}
+
 
 vector<vector<int>> MinCut(double** x, int n) {
-  vector<vector<int>> subtours;
-  vector<int> S;
+  srand(time(NULL));
+  vector<vector<int>> S;
   int node = 0;
-  bool check = true;
 
   filterX(x, n);
 
-  while(check) {
-    check = !allNodesOnSubtours(n, subtours);
-    S = SingleMinCut(x, n, node);
-    subtours.push_back(S);
-    node = nodeOutsideSubtour(subtours);
-  }
+  S = SingleMinCut(x, n, node);
 
-  return subtours;
+  return S;
 }
 
 
