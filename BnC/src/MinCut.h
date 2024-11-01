@@ -18,11 +18,11 @@ using namespace std;
 
 int qtUsedNodes2(const vector<vector<int>> &subtours);
 
-void calculateDegreeOfConnection(double** x, vector<double> &degreeOfConnection, vector<vector<int>> &A, vector<vector<int>> &V, vector<bool> &CL);
+void calculateDegreeOfConnection(const double** x, vector<double> &degreeOfConnection, const vector<int> &newSet, const vector<vector<int>> &V, const vector<bool> &CL);
 
-int mostTightlyConnectedVertex(vector<double> &degreeOfConnection);
+int mostTightlyConnectedSet(vector<double> &degreeOfConnection);
 
-void forbiddenNodes(vector<bool> &CL, vector<vector<int>> &A);
+void forbiddenSets(vector<bool> &CL, vector<vector<int>> &A);
 
 vector<vector<int>> MinimumCutPhase(double **x, int n, vector<vector<int>> &V, int idxInitialSet);
 

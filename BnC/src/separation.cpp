@@ -28,56 +28,6 @@ vector<vector<int>> MaxBack(double** x, int n) {
   return subtours;
 }
 
-bool allNodesOnSubtours(int n, vector<vector<int>> &subtours) {
-  vector<int> t(n);
-
-  for(int i = 0; i < n; i++) t[i] = i;
-
-  for(int i = 0; i < subtours.size(); i++) {
-    for(int j = 0; j < subtours[i].size(); j++) {
-      for(int k = 0; k < t.size(); k++) {
-        if(subtours[i][j] == t[k]) {
-          t.erase(t.begin()+k);
-          
-          if(t.size() == 0) return true;
-
-          break;
-        }
-      }
-    }
-  }
-
-  return false;
-}
-
-
-int nodeOutsideSubtour(vector<vector<int>> &subtours, vector<bool> &possibleNodes) {
-  int noUsedNode = 0;
-
-  for(int i = 0; i < subtours.size(); i++) {
-    for(int j = 0; j < subtours[i].size(); j++) {
-      if(possibleNodes[j] == false) {
-        noUsedNode++;
-        i = -1;
-        break;
-      }
-      if(subtours[i][j] == noUsedNode) {
-        noUsedNode++;
-        i = -1;
-        break;
-      }
-    }
-  }
-
-  possibleNodes[noUsedNode] = false;
-  return noUsedNode;
-}
-
-int nodeInSubtour(vector<vector<int>> &subtours, vector<bool> &possibleNodes) {
-
-  possibleNodes[subtours[subtours.size()-1][0]] = false;
-  return subtours[subtours.size()-1][0];
-}
 
 void showSubtours(vector<vector<int>> &subtours) {
   for(int i = 0; i < subtours.size(); i++) {
@@ -88,34 +38,7 @@ void showSubtours(vector<vector<int>> &subtours) {
   }
 }
 
-bool sInSubtours(vector<vector<int>> &subtours, vector<int> &S) {
-  for(int i = 0; i < subtours.size(); i++) {
-    for(int j = 0; j < subtours[i].size(); j++) {
-      if(S.size() != subtours[i].size()) break;
 
-      if(S[j] != subtours[i][j]) break;
-      if(j == subtours[i].size()-1) return false;
-    }
-  }
-
-  return true;
-}
-
-void getComplementary(vector<vector<int>> &S, int n) {
-  vector<bool> barra(n, false);
-  for(int i = 0; i < S.size(); i++) {
-    for(int j = 0; j < S[i].size(); j++) {
-      barra[S[i][j]] = true;
-    }
-  }
-
-  vector<int> sla;
-  for(int i = 0; i < n; i++) {
-    if(!barra[i]) sla.push_back(i);
-  }
-
-  S.push_back(sla);
-}
 
 
 vector<vector<int>> MinCut(double** x, int n) {
@@ -126,6 +49,11 @@ vector<vector<int>> MinCut(double** x, int n) {
   filterX(x, n);
 
   S = SingleMinCut(x, n, node);
+
+  cout << "eu\n";
+  showSubtours(S);
+  int t;
+  cin >> t;
 
   return S;
 }
