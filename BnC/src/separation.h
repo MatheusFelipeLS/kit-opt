@@ -18,7 +18,6 @@
 #include <iterator>
 #include <pthread.h>
 #include "MaxBack.h"
-#include "MinCut.h"
 
 #define EPSILON 0.00000001
 

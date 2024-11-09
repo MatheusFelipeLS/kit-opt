@@ -16,18 +16,6 @@
 
 using namespace std;
 
-int qtUsedNodes(const vector<vector<int>> &subtours);
-
-int nextNode(vector<vector<int>> &subtours);
-
-vector<bool> createCandidateList(int n, int node);
-
-double calculateCutMin(double** x, int n, int node);
-
-void calculateBv(double** x, int n, vector<double> &bv, vector<int> &S, vector<bool> &CL);
-
-int getNodeWithBiggestMaxBack(const vector<double> &bv);
-
 vector<int> SingleMaxBack(double** x, int n, int initialNode, vector<vector<int>> &subtours);
 
 
