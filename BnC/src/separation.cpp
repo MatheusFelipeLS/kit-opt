@@ -13,35 +13,6 @@ void printEntrada(double** x, int n);
 void printS(vector<vector<int>> &S);
 
 
-int qtUsedNodes(const vector<vector<int>> &subtours) {
-  int size = 0;
-  for(int i = 0; i < subtours.size(); i++) {
-    for(int j = 0; j < subtours[i].size(); j++) {
-      size++;
-    }
-  }
-
-  return size;
-}
-
-// int nextNode(vector<vector<int>> &subtours) {
-//   int noUsedNode = 0;
-
-//   for(int i = 0; i < subtours.size(); i++) {
-//     for(int j = 0; j < subtours[i].size(); j++) {
-//       if(subtours[i][j] == noUsedNode) {
-//         noUsedNode++;
-//         i = -1;
-//         break;
-//       }
-//     }
-//   }
-
-//   if(noUsedNode == n) return -1;
-
-//   return noUsedNode;
-// }
-
 int nextNode(vector<bool> &inSubtours) {
   for(int i = 0; i < inSubtours.size(); i++) {
     if(!inSubtours[i]) return i;
@@ -161,36 +132,13 @@ vector<vector<int>> MinimumCutPhase(double **x, int n, vector<vector<int>> &V, i
   while(A.size() < sizeV) {
     forbiddenSets(CL, idx);
 
-    // cout << "\nCL\n";
-    // for(int i = 0; i < CL.size(); i++) cout << i << ": "<< CL[i] << "; ";
-    // cout << endl;
-    // cin >> t;
-
     calculateDegreeOfConnection(x, degreeOfConnection, A[A.size()-1], V, CL);
-
-    // cout << "\ndegree\n";
-    // for(int i = 0; i < degreeOfConnection.size(); i++) cout << i << ": "<< degreeOfConnection[i] << "; ";
-    // cout << endl;
-    // cin >> t;
 
     idx = mostTightlyConnectedSet(degreeOfConnection, CL);
 
-    // cout << "idx: " << idx << endl;
-    // cin >> t;
-
     A.insert(A.end(), V.begin()+idx, V.begin()+idx+1);
 
-    // cout << "A: ";
-    // printS(A);
-    // cin >> t;
-
     degreeOfConnection[idx] = 0;
-
-    // if(!CL[idx]) {
-    //   cout << "???";
-    //   int t;
-    //   cin >>t;
-    // }
   }
 
   return A;
@@ -278,42 +226,19 @@ vector<vector<int>> MinCut(double** x, int n) {
 
   for(int i = 0; i < n; i++) V[i].push_back(i);
 
-  // cout << "MinCut" << endl;
-  // printEntrada(x, n);
-
   while(V.size() > 1) {
-    // cout << "V\n";
-    // printS(V); 
     vector<vector<int>> S = MinimumCutPhase(x, n, V, idx);
 
-    // cout << "S\n";
-    // printS(S);    
-
     cutOfThePhase = calculateCutOfThePhase(x, n, S);
-    // cout << "cutOfThePhase: " << cutOfThePhase << endl; 
 
     if(cutOfThePhase < 2 - EPSILON) {
       if(S[S.size()-1].size() != n) {
         sets.push_back(S[S.size()-1]); 
       }
-      // cout << "Sets 1\n";
-      // printS(sets);    
     } 
-    // else if(cutOfThePhase < cutmin) {
-    //   cutmin = cutOfThePhase;
-    //   sla = S[S.size()-1];
-    // }
 
     idx = merge2LastSets(V, S, idx);
-    // int t;
-    // cin >> t;
-    // cout << endl << endl;   
   }
-
-  // cout << "Sets\n";
-  // printSets(sets);    
-  // int t;
-  // cin >> t;
 
   return sets;
 }
