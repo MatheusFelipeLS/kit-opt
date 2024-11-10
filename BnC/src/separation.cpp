@@ -265,12 +265,11 @@ int qtNodesOnLastSet(vector<int> &lastSet, int n) {
 void printSets(vector<vector<int>> &S);
 
 vector<vector<int>> MinCut(double** x, int n) {
+  filterX(x, n);
+
   srand(time(NULL));
   int node = 0;
   int cutmin = 99999999;
-
-  filterX(x, n);
-
   vector<vector<int>> sets;
   vector<vector<int>> V(n);
   vector<int> sla;
@@ -279,8 +278,8 @@ vector<vector<int>> MinCut(double** x, int n) {
 
   for(int i = 0; i < n; i++) V[i].push_back(i);
 
-  cout << "MinCut" << endl;
-  printEntrada(x, n);
+  // cout << "MinCut" << endl;
+  // printEntrada(x, n);
 
   while(V.size() > 1) {
     // cout << "V\n";
@@ -294,7 +293,9 @@ vector<vector<int>> MinCut(double** x, int n) {
     // cout << "cutOfThePhase: " << cutOfThePhase << endl; 
 
     if(cutOfThePhase < 2 - EPSILON) {
-      sets.push_back(S[S.size()-1]);
+      if(S[S.size()-1].size() != n) {
+        sets.push_back(S[S.size()-1]); 
+      }
       // cout << "Sets 1\n";
       // printS(sets);    
     } 
