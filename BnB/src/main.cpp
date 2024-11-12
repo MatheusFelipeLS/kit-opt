@@ -104,6 +104,7 @@ vector<vector<int>> getSubtour(hungarian_problem_t *p) {
 vector<vector<int>> getSolutionHungarian(Node *node, Data *data, double **cost, double UB) {
 	hungarian_problem_t p;
 	int mode = HUNGARIAN_MODE_MINIMIZE_COST;
+	
 	hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); // Carregando o problema
 
 	node->lower_bound = hungarian_solve(&p);
@@ -113,15 +114,22 @@ vector<vector<int>> getSolutionHungarian(Node *node, Data *data, double **cost, 
 
 	node->chosen = 0;
 	if(sequence.size() == 1) {
+
 		node->feasible = true;
+
 	} else {
+
 		node->feasible = false;
+
 		int tam_min = sequence[0].size();
+
 		for(int i = 1; i < sequence.size(); ++i) {
+
 			if(sequence[i].size() < tam_min) {
 				tam_min = sequence[i].size();
 				node->chosen = i;
 			}
+		
 		}
 	}
 
@@ -146,9 +154,9 @@ void restartCostMatrix(double **cost, Node *node, Data *data) {
 
 
 struct CompareLB {
-    bool operator()(Node const& n1, Node const& n2) {
-        return n1.lower_bound > n2.lower_bound;
-    }
+	bool operator()(Node const& n1, Node const& n2) {
+		return n1.lower_bound > n2.lower_bound;
+	}
 };
 
 
@@ -167,6 +175,7 @@ double BnB(Data *data, double** cost, int strategy) {
 
 	while(!tree.empty() || !treePq.empty()) {
 		Node node;
+
 		if(strategy != 3) {
 			node = branchingStrategy(tree, strategy);
 		} else {
@@ -180,23 +189,30 @@ double BnB(Data *data, double** cost, int strategy) {
 
 		restartCostMatrix(cost, &node, data);
 
-		if(node.lower_bound >= upper_bound) {
-			continue;
-		}
+		if(node.lower_bound >= upper_bound) continue;
+		
 
 		if(node.feasible) {
+
 			upper_bound = node.lower_bound;
+
 		} else {
+
 			for(int i = 0; i < node.subtour[node.chosen].size()-1; ++i) {
 				Node n;
+
 				n.lower_bound = node.lower_bound;
 				n.forbidden_arcs = node.forbidden_arcs;
+
 				pair<int, int> forbidden_arc = {
 					node.subtour[node.chosen][i],
 					node.subtour[node.chosen][i+1]
 				};
+
 				n.forbidden_arcs.push_back(forbidden_arc);
+
 				if(strategy != 3) tree.push_back(n);
+
 				else treePq.push(n);
 			}
 		}	
@@ -226,8 +242,11 @@ int main(int argc, char** argv) {
 	}
 	
 	vector<string> strategies = {"BFS", "DFS", "Lower Bound"};
+
 	double upper_bound = BnB(data, cost, strategy);
+
 	cout << strategies[strategy-1] << " - upper_bound: " << upper_bound << endl;
+
 
 	for (int i = 0; i < data->getDimension(); i++) delete [] cost[i];
 	delete [] cost;
