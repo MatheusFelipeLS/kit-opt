@@ -1,17 +1,17 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <ilcplex/ilocplex.h>
+
 using namespace std;
 
 #include "Data.h"
-#include "CG.h"
+#define EPSILON 1e-4
 
-double BnB(Data *data, int strategy);
+struct Node {
+	vector<pair<int, int>> together;
+	vector<pair<int, int>> separated; 
+  double qtBins;
+};
 
-void showNode(Node n);
+int BnB(Data *data, int strategy);
 Node branchingStrategy(vector<Node> &tree, int strategy);
-vector<pair<int, int>> getSolutionKruskal(Node *node, Data *data, vector<vector<double>> &cost_matrix, double UB);
-void forbidArcs(vector<vector<double>> &cost_matrix, Node *node);
-void restartCostMatrix(vector<vector<double>> &cost_matrix, Node *node, Data *data);
-
-void printCostMatrix(vector<vector<double>> &cost);

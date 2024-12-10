@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	start = std::chrono::system_clock::now();
 
-	double qtBins = BnB(&data, 2);
+	int qtBins = BnB(&data, 2);
 
 	cout << "Bins usados: " << qtBins << endl;
 
