@@ -4,14 +4,14 @@ make
 
 k=1
 for instance in instances/*; do
-	echo $instance >> ./results.txt
+	echo $instance >> ./combo.txt
 
 	echo "Running $instance"
 	echo "Instance $k of ???" 
 
-	./bpp ${instance} | awk "{print $1}" >> ./results.txt
+	./bpp ${instance} | awk "{print $1}" >> ./combo.txt
 
 	k=$(($k + 1))
 done
 
-echo "-" >> ./results.txt
+echo "-" >> ./combo.txt

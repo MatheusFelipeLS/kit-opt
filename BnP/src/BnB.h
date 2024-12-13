@@ -1,17 +1,18 @@
 #include <iostream>
 #include <vector>
 #include <ilcplex/ilocplex.h>
-
-using namespace std;
+#include <malloc.h>
+#include <algorithm>
 
 #include "Data.h"
+
+
 #define EPSILON 1e-4
 
 struct Node {
-	vector<pair<int, int>> together;
-	vector<pair<int, int>> separated; 
-  double qtBins;
+	std::vector<std::pair<int, int>> together;
+	std::vector<std::pair<int, int>> separated; 
 };
 
 int BnB(Data *data, int strategy);
-Node branchingStrategy(vector<Node> &tree, int strategy);
+Node branchingStrategy(std::vector<Node> &tree, int strategy);

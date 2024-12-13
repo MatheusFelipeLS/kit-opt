@@ -1,0 +1,450 @@
+instances/N3C2W2_M.BPP
+Bins usados: 108
+Elapsed time (s): 7.409
+
+
+instances/N3C2W2_N.BPP
+Bins usados: 105
+Elapsed time (s): 7.423
+
+
+instances/N3C2W2_O.BPP
+Bins usados: 107
+Elapsed time (s): 6.909
+
+
+instances/N3C2W2_P.BPP
+Bins usados: 107
+Elapsed time (s): 6.883
+
+
+instances/N3C2W2_Q.BPP
+Bins usados: 105
+Elapsed time (s): 5.828
+
+
+instances/N3C2W2_R.BPP
+Bins usados: 110
+Elapsed time (s): 5.657
+
+
+instances/N3C2W2_S.BPP
+Bins usados: 107
+Elapsed time (s): 5.91
+
+
+instances/N3C2W2_T.BPP
+Bins usados: 107
+Elapsed time (s): 8.691
+
+
+instances/N3C2W4_A.BPP
+Bins usados: 113
+Elapsed time (s): 8.412
+
+
+instances/N3C2W4_B.BPP
+Bins usados: 112
+Elapsed time (s): 8.033
+
+
+instances/N3C2W4_C.BPP
+Bins usados: 132
+Elapsed time (s): 5.902
+
+
+instances/N3C2W4_D.BPP
+Bins usados: 114
+Elapsed time (s): 8.227
+
+
+instances/N3C2W4_E.BPP
+Bins usados: 110
+Elapsed time (s): 12.905
+
+
+instances/N3C2W4_F.BPP
+Bins usados: 115
+Elapsed time (s): 9.36
+
+
+instances/N3C2W4_G.BPP
+Bins usados: 122
+Elapsed time (s): 7.886
+
+
+instances/N3C2W4_H.BPP
+Bins usados: 113
+Elapsed time (s): 10.115
+
+
+instances/N3C2W4_I.BPP
+Bins usados: 115
+Elapsed time (s): 13.017
+
+
+instances/N3C2W4_J.BPP
+Bins usados: 120
+Elapsed time (s): 4.703
+
+
+instances/N3C2W4_K.BPP
+Bins usados: 117
+Elapsed time (s): 10.477
+
+
+instances/N3C2W4_L.BPP
+Bins usados: 116
+Elapsed time (s): 3.952
+
+
+instances/N3C2W4_M.BPP
+Bins usados: 120
+Elapsed time (s): 4.933
+
+
+instances/N3C2W4_N.BPP
+Bins usados: 117
+Elapsed time (s): 4.263
+
+
+instances/N3C2W4_O.BPP
+Bins usados: 113
+Elapsed time (s): 6.736
+
+
+instances/N3C2W4_P.BPP
+Bins usados: 122
+Elapsed time (s): 5.282
+
+
+instances/N3C2W4_Q.BPP
+Bins usados: 118
+Elapsed time (s): 8.579
+
+
+instances/N3C2W4_R.BPP
+Bins usados: 123
+Elapsed time (s): 7.883
+
+
+instances/N3C2W4_S.BPP
+Bins usados: 118
+Elapsed time (s): 7.22
+
+
+instances/N3C2W4_T.BPP
+Bins usados: 119
+Elapsed time (s): 7.512
+
+
+instances/N3C3W1_A.BPP
+Bins usados: 66
+Elapsed time (s): 39.121
+
+
+instances/N3C3W1_B.BPP
+Bins usados: 71
+Elapsed time (s): 34.572
+
+
+instances/N3C3W1_C.BPP
+Bins usados: 69
+Elapsed time (s): 41.487
+
+
+instances/N3C3W1_D.BPP
+Bins usados: 63
+Elapsed time (s): 41.305
+
+
+instances/N3C3W1_E.BPP
+Bins usados: 68
+Elapsed time (s): 41.203
+
+
+instances/N3C3W1_F.BPP
+Bins usados: 69
+Elapsed time (s): 40.55
+
+
+instances/N3C3W1_G.BPP
+Bins usados: 65
+Elapsed time (s): 41.175
+
+
+instances/N3C3W1_H.BPP
+Bins usados: 69
+Elapsed time (s): 41.011
+
+
+instances/N3C3W1_I.BPP
+Bins usados: 68
+Elapsed time (s): 33.901
+
+
+instances/N3C3W1_J.BPP
+Bins usados: 65
+Elapsed time (s): 42.703
+
+
+instances/N3C3W1_K.BPP
+Bins usados: 63
+Elapsed time (s): 46.629
+
+
+instances/N3C3W1_L.BPP
+Bins usados: 68
+Elapsed time (s): 43.645
+
+
+instances/N3C3W1_M.BPP
+Bins usados: 71
+Elapsed time (s): 36.499
+
+
+instances/N3C3W1_N.BPP
+Bins usados: 69
+Elapsed time (s): 41.23
+
+
+instances/N3C3W1_O.BPP
+Bins usados: 66
+Elapsed time (s): 49.547
+
+
+instances/N3C3W1_P.BPP
+Bins usados: 72
+Elapsed time (s): 52.95
+
+
+instances/N3C3W1_Q.BPP
+Bins usados: 73
+Elapsed time (s): 40.979
+
+
+instances/N3C3W1_R.BPP
+Bins usados: 66
+Elapsed time (s): 57.076
+
+
+instances/N3C3W1_S.BPP
+Bins usados: 68
+Elapsed time (s): 43.64
+
+
+instances/N3C3W1_T.BPP
+Bins usados: 70
+Elapsed time (s): 40.269
+
+
+instances/N3C3W2_A.BPP
+Bins usados: 84
+Elapsed time (s): 44.366
+
+
+instances/N3C3W2_B.BPP
+Bins usados: 81
+Elapsed time (s): 34.508
+
+
+instances/N3C3W2_C.BPP
+Bins usados: 82
+Elapsed time (s): 24.799
+
+
+instances/N3C3W2_D.BPP
+Bins usados: 79
+Elapsed time (s): 39.992
+
+
+instances/N3C3W2_E.BPP
+Bins usados: 79
+Elapsed time (s): 46.28
+
+
+instances/N3C3W2_F.BPP
+Bins usados: 81
+Elapsed time (s): 51.719
+
+
+instances/N3C3W2_G.BPP
+Bins usados: 81
+Elapsed time (s): 35.804
+
+
+instances/N3C3W2_H.BPP
+Bins usados: 82
+Elapsed time (s): 51.004
+
+
+instances/N3C3W2_I.BPP
+Bins usados: 79
+Elapsed time (s): 37.306
+
+
+instances/N3C3W2_J.BPP
+Bins usados: 83
+Elapsed time (s): 41.816
+
+
+instances/N3C3W2_K.BPP
+Bins usados: 83
+Elapsed time (s): 30.847
+
+
+instances/N3C3W2_L.BPP
+Bins usados: 82
+Elapsed time (s): 33.421
+
+
+instances/N3C3W2_M.BPP
+Bins usados: 83
+Elapsed time (s): 41.441
+
+
+instances/N3C3W2_N.BPP
+Bins usados: 77
+Elapsed time (s): 40.079
+
+
+instances/N3C3W2_O.BPP
+Bins usados: 82
+Elapsed time (s): 37.822
+
+
+instances/N3C3W2_P.BPP
+Bins usados: 80
+Elapsed time (s): 29.759
+
+
+instances/N3C3W2_Q.BPP
+Bins usados: 76
+Elapsed time (s): 33.423
+
+
+instances/N3C3W2_R.BPP
+Bins usados: 79
+Elapsed time (s): 46.411
+
+
+instances/N3C3W2_S.BPP
+Bins usados: 80
+Elapsed time (s): 42.23
+
+
+instances/N3C3W2_T.BPP
+Bins usados: 79
+Elapsed time (s): 35.46
+
+
+instances/N3C3W4_A.BPP
+Bins usados: 89
+Elapsed time (s): 19.41
+
+
+instances/N3C3W4_B.BPP
+Bins usados: 88
+Elapsed time (s): 26.341
+
+
+instances/N3C3W4_C.BPP
+Bins usados: 88
+Elapsed time (s): 44.598
+
+
+instances/N3C3W4_D.BPP
+Bins usados: 87
+Elapsed time (s): 33.331
+
+
+instances/N3C3W4_E.BPP
+Bins usados: 85
+Elapsed time (s): 44.784
+
+
+instances/N3C3W4_F.BPP
+Bins usados: 84
+Elapsed time (s): 34.803
+
+
+instances/N3C3W4_G.BPP
+Bins usados: 94
+Elapsed time (s): 18.431
+
+
+instances/N3C3W4_H.BPP
+Bins usados: 84
+Elapsed time (s): 36.217
+
+
+instances/N3C3W4_I.BPP
+Bins usados: 92
+Elapsed time (s): 18.129
+
+
+instances/N3C3W4_J.BPP
+Bins usados: 88
+Elapsed time (s): 30.726
+
+
+instances/N3C3W4_K.BPP
+Bins usados: 89
+Elapsed time (s): 38.962
+
+
+instances/N3C3W4_L.BPP
+Bins usados: 90
+Elapsed time (s): 21.821
+
+
+instances/N3C3W4_M.BPP
+Bins usados: 88
+Elapsed time (s): 52.829
+
+
+instances/N3C3W4_N.BPP
+Bins usados: 87
+Elapsed time (s): 24
+
+
+instances/N3C3W4_O.BPP
+Bins usados: 87
+Elapsed time (s): 37.853
+
+
+instances/N3C3W4_P.BPP
+Bins usados: 86
+Elapsed time (s): 35.14
+
+
+instances/N3C3W4_Q.BPP
+Bins usados: 87
+Elapsed time (s): 6.768
+
+
+instances/N3C3W4_R.BPP
+Bins usados: 87
+Elapsed time (s): 41.009
+
+
+instances/N3C3W4_S.BPP
+Bins usados: 84
+Elapsed time (s): 39.301
+
+
+instances/N3C3W4_T.BPP
+Bins usados: 85
+Elapsed time (s): 53.434
+
+
+instances/N4C1W1_A.BPP
+Bins usados: 240
+Elapsed time (s): 92.8
+
+
+instances/N4C1W1_B.BPP
+Bins usados: 262
+Elapsed time (s): 55.467
+
+

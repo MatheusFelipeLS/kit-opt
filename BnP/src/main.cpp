@@ -1,10 +1,10 @@
-#include "Data.h"
-#include "BnB.h"
 #include <iostream>
 #include <list>
 #include <chrono>
 
-using namespace std;
+#include "Data.h"
+#include "BnB.h"
+
 
 int main(int argc, char **argv)
 {
@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 
 	int qtBins = BnB(&data, 2);
 
-	cout << "Bins usados: " << qtBins << endl;
+	std::cout << "Bins usados: " << qtBins << std::endl;
 
 	end = std::chrono::system_clock::now();
 
