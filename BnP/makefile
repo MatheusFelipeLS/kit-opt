@@ -36,7 +36,7 @@ OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
 #############################
 
 #### regra principal, gera o executavel
-bpp: $(OBJS) 
+bnp: $(OBJS) 
 	@echo  "\033[31m \nLinking all objects files: \033[0m"
 	$(CPPC) $(BITS_OPTION) $(OBJS) -o $@ $(CCLNFLAGS)
 ############################
@@ -58,7 +58,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 #delete objetos e arquivos de dependencia
 clean:
 	@echo "\033[31mcleaning obj directory \033[0m"
-	@rm bpp -f $(OBJDIR)/*.o $(OBJDIR)/*.d
+	@rm bnp -f $(OBJDIR)/*.o $(OBJDIR)/*.d
 
 
-rebuild: clean bpp
+rebuild: clean bnp
